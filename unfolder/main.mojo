@@ -43,6 +43,8 @@ fn array_test():
     print("Array[Ind[2]](size=6, splat=(7,8)), then set self[2] = (1,2):\n" + _str[2](row_ind), "\n")
 
 
+#------ table test ------#
+
 fn table_test():
     let table_none: Table[Int] = Table[Int]()
     let table_zero: Table[Int] = Table[Int](0,0)
