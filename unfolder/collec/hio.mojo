@@ -1,9 +1,7 @@
 from utils.index import StaticIntTuple as Ind
-from array import Array
-from table import Table, Row, reduce_max
-from graph import Graph
-
-fn say_the_thing(): print("hio world")
+from collec.array import Array
+from collec.table import Table, Row, reduce_max
+from collec.graph import Graph
 
 # format an array of <Int> as a <String>
 fn _str(o: Array[Int]) -> String:

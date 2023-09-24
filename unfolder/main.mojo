@@ -1,9 +1,8 @@
 from utils.index import StaticIntTuple as Ind
-from hio import _print, _str
-from array import Array
-from table import Table, Row
-from graph import Graph, str_relations
-
+from collec.array import Array
+from collec.table import Table, Row
+from collec.graph import Graph, str_relations
+from collec.hio import _print, _str
 
 fn main():
     unfolder_test()

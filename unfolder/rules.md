@@ -12,3 +12,4 @@ Unfolder-Loop Rule:
 - we'll call the repeated nodes `l`, and `l+`. We treat `l+` as a new node.
 - For each path, add a directed edge from `l+` to `l`.
 - Combine all paths using the new labels to get `G~N`
+- weights always 1

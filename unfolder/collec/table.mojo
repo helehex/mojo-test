@@ -3,7 +3,7 @@ from math.limit import min_finite
 from memory.unsafe import Pointer
 from memory import memset_zero, memcpy
 from utils.index import StaticIntTuple as Ind
-from array import Array
+from collec.array import Array
 
 
 

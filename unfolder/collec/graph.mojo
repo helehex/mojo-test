@@ -2,9 +2,8 @@ from math import min, max
 from utils.vector import DynamicVector as List
 from utils.list import VariadicList as Para
 from utils.index import StaticIntTuple as Ind
-from array import Array
-from table import Table, Row
-from hio import _str
+from collec.array import Array
+from collec.table import Table, Row
 
 
 #------ Unfolder-Loop Graph, constructed from a previous step, or a history
@@ -22,7 +21,7 @@ struct Graph:
     var nodes: Table[Int]     # x = space, y = time     Int ~ unsorted id     accessed by [previous_node_index, depth]     0 = no node, {node_index + 1} = node
     var edges: Table[Int]     # x = edges, y = nodes    Int ~ weight          accessed by [node_index, node_index]         0 = no edge, {weight} = edge
     
-    var weights: Array[Int]   # the nodes weights, can represent the self loop.
+    var weights: Array[Int]   # the nodes weights, can represent the self loop. *-- not necessary for unfolder loop, but i'll keep it here as an example for normal unfolder
     var bounds: Array[Ind[2]]   # point[0] = edge_start, point[1] = edge_end
     
     var _xy_id: Array[Ind[2]]   # to_point[unsorted id] = table coordinates
