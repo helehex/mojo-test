@@ -2,8 +2,8 @@ from math import min, max
 from utils.vector import DynamicVector as List
 from utils.list import VariadicList as Para
 from utils.index import StaticIntTuple as Ind
-from collec.array import Array
-from collec.table import Table, Row
+from collec import Array
+from collec import Table, Row
 
 
 #------ Unfolder-Loop Graph, constructed from a previous step, or a history

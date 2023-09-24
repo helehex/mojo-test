@@ -1,20 +1,21 @@
-from utils.index import StaticIntTuple as Ind
-from collec.array import Array
-from collec.table import Table, Row
-from collec.graph import Graph, str_relations
-from collec.hio import _print, _str
-
 fn main():
     unfolder_test()
     #array_test()
     #table_test()
 
 fn unfolder_test():
+    from collec import Graph, str_relations
+    from collec import _print, _str
+    
     let g: Graph = Graph.follow(1,1,1,1,1)
     #print(str_relations(g))
     print(_str(g))
 
 fn array_test():
+    from utils.index import StaticIntTuple as Ind
+    from collec import Array
+    from collec import _print, _str
+
     let array_none: Array[Int] = Array[Int]()
     let array_zero: Array[Int] = Array[Int](0)
     var array_empty: Array[Int] = Array[Int](10)
@@ -35,6 +36,11 @@ fn array_test():
 
 
 fn table_test():
+    from utils.index import StaticIntTuple as Ind
+    from collec import Array
+    from collec import Table, Row
+    from collec import _print, _str
+
     let table_none: Table[Int] = Table[Int]()
     let table_zero: Table[Int] = Table[Int](0,0)
     let table_cols: Table[Int] = Table[Int](6,0)
