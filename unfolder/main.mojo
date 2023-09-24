@@ -1,8 +1,9 @@
+from utils.index import StaticIntTuple as Ind
 from array import Array
 from table import Table, Row
 from graph import Graph
 from hio import _print, _str
-from utils.index import StaticIntTuple as Ind
+
 
 fn main():
     unfolder_loop_test()
