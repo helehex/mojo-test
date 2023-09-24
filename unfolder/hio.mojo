@@ -1,9 +1,11 @@
 from utils.index import StaticIntTuple as Ind
-from collec import Array
-from collec import Table, Row, reduce_max
-from collec import Graph
+from array import Array
+from table import Table, Row, reduce_max
+from graph import Graph
 
-# format an array of <Int> as a <String>
+fn say_the_thing(): print("hio world")
+
+# format an array of Int as a String
 fn _str(o: Array[Int]) -> String:
     var s: String = "["
     for x in range(o._size - 1): s += String(o[x]) + ", "
@@ -12,7 +14,7 @@ fn _str(o: Array[Int]) -> String:
     return s
 fn _print(o: Array[Int]): print(_str(o))
 
-# format an array of <Ind> as a <String>
+# format an array of Ind as a String
 fn _str[size: Int](o: Array[Ind[size]]) -> String:
     var s: String = "["
     for x in range(o._size - 1): s += String(o[x]) + ", "
@@ -21,7 +23,7 @@ fn _str[size: Int](o: Array[Ind[size]]) -> String:
     return s
 fn _print[size: Int](o: Array[Ind[size]]): print(_str[size](o))
 
-# format a table of <Int> as a <String>
+# format a table of Int as a String
 fn _str(o: Table[Int]) -> String:
     let room = len(String(reduce_max(o)))
     var s: String = ""
