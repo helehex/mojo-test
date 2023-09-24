@@ -39,7 +39,7 @@ struct Array[T: AnyType]:
         self.splat(splat) # fills the entire array with the value of splat
     
     @always_inline
-    fn __init__(inout self, owned array: Self): # owned array for the case of infinite self reference (self = array)
+    fn __init__(inout self, owned array: Self): # owned array for the case of infinite self reference? (self = array)
         self._size = array._size
         self._rc = Pointer[Int].alloc(1)
         self._data = Pointer[T].alloc(array._size) # uses the size from the array passed in
@@ -47,7 +47,7 @@ struct Array[T: AnyType]:
         self.copy(array)
         
     @always_inline
-    fn __init__(inout self, size: Int, owned array: Self): # owned array for the case of infinite self reference (self = array)
+    fn __init__(inout self, size: Int, owned array: Self):
         self._size = size
         self._rc = Pointer[Int].alloc(1)
         self._data = Pointer[T].alloc(size) # uses the size defined localy
@@ -56,7 +56,7 @@ struct Array[T: AnyType]:
         self.clear(min(size, array._size), size)
         
     @always_inline
-    fn __init__(inout self, owned array: Self, append: T): # owned array for the case of infinite self reference (self = array)
+    fn __init__(inout self, owned array: Self, append: T):
         let size = array._size + 1
         self._size = size
         self._rc = Pointer[Int].alloc(1)

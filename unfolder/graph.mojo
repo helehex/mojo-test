@@ -6,16 +6,10 @@ from array import Array
 from table import Table, Row
 from hio import _str
 
-# ------ Unfolder-Loop Graph, constructed from a previous step, or a history
-# - was there ever a path that touched every node? the Hamiltonian+?
-# - random walks are less likely to hit themselves as you go up in dimension. does this have an impact on dimension change over time?
-# - im interested to plot the probability/weight space in a third z axis, this might look cool.
-# - asynchronous unfolding, you can start the next step once the crawl has reached one sub-step past the node you want to be the next origin.
-# - the future looped edges will be directed towards the present, so asynchronous stepping should still hold. similar to unfolder part 1.
-# - something to remember, storing every walks history explodes very fast
-# - hard sorting between each step may lead to worse memory than an array with labels
-# - a node in this system is considered a self-edge
 
+#------ Unfolder-Loop Graph, constructed from a previous step, or a history
+#--- nodes are considered self-edges
+#---
 struct Graph:
     var width: Int            # known,   = count_n-1.. at least for unfolder part 1
     var depth: Int            # unknown, < width + 1
@@ -61,8 +55,8 @@ struct Graph:
                 Table[Int](1,1,1), #--------------------- nodes
                 Table[Int](1,1,0), #--------------------- edges
                 Array[Int](1,1), #----------------------- weights
-                Array[Ind[2]](1,Ind[2](1,1)), #-------------- bounds
-                Array[Ind[2]](1,Ind[2](0,0)), #-------------- _xy_id
+                Array[Ind[2]](1,Ind[2](1,1)), #---------- bounds
+                Array[Ind[2]](1,Ind[2](0,0)), #---------- _xy_id
                 Array[Int](1,1), #----------------------- _lb_id
                 Array[Int](2,0) #------------------------ _id_lb
                 )
@@ -92,10 +86,10 @@ struct Graph:
         weights[0] += 1
         
         #--- start crawling the seed graph, adding new nodes to this graph along the way
-        #
+        #---
         #--- when a node with at least one child which doesnt loop is reached, that childs index will be pushed onto the trace, and used to set the indexed mask true
         #--- when a node is reached where every child forms a loop, it's index will be popped from the trace, and used to set the indexed mask false
-        #
+        #---
         var trace: List[Int] = List[Int](width)
         var mask: Array[Int] = Array[Int](width)  # mask contains the depth the trace was at when the index was pushed, +1. if it has not been reached, 0.
         var edge_start: Int = 0                   # the edge to start looping at
@@ -175,8 +169,8 @@ struct Graph:
         _ = trace
         _ = mask
         depth = max_depth + 1
-        #
-        #
+        #---
+        #---
         #------ end cawl
 
         var bounds: Array[Ind[2]] = Array[Ind[2]](node_count)
@@ -263,14 +257,14 @@ struct Graph:
         self.node_count = node_count
         self.edge_count = edge_count
         self.max_edge_out = max_edge_out
-        self.history = history^
-        self.nodes = nodes^
-        self.edges = edges^
-        self.weights = weights^
-        self.bounds = bounds^
-        self._xy_id = _xy_id^
-        self._lb_id = _lb_id^
-        self._id_lb = _id_lb^
+        self.history = history
+        self.nodes = nodes
+        self.edges = edges
+        self.weights = weights
+        self.bounds = bounds
+        self._xy_id = _xy_id
+        self._lb_id = _lb_id
+        self._id_lb = _id_lb
         
     fn __moveinit__(inout self, owned other: Self):
         self.width = other.width
@@ -278,14 +272,14 @@ struct Graph:
         self.node_count = other.node_count
         self.edge_count = other.edge_count
         self.max_edge_out = other.max_edge_out
-        self.history = other.history^
-        self.nodes = other.nodes^
-        self.edges = other.edges^
-        self.weights = other.weights^
-        self.bounds = other.bounds^
-        self._xy_id = other._xy_id^
-        self._lb_id = other._lb_id^
-        self._id_lb = other._id_lb^
+        self.history = other.history
+        self.nodes = other.nodes
+        self.edges = other.edges
+        self.weights = other.weights
+        self.bounds = other.bounds
+        self._xy_id = other._xy_id
+        self._lb_id = other._lb_id
+        self._id_lb = other._id_lb
 
     @always_inline
     fn id_xy(self, xy: Ind[2]) -> Int: return self.nodes[xy].__int__() - 1  # node-coordinates to node-id

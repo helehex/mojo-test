@@ -13,7 +13,7 @@ fn main():
 fn unfolder_test():
     let g: Graph = Graph.follow(1,1,1,1,1)
     #print(str_relations(g))
-    print(_str(g)) # run this cell again, and it will fail 
+    print(_str(g))
 
 fn array_test():
     let array_none: Array[Int] = Array[Int]()
