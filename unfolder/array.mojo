@@ -104,10 +104,10 @@ struct Array[T: AnyType]:
         memset_zero(self._data, self._size) # fill the entire array with zero's
     
     @always_inline
-    fn clear(self, o_: Int, _o: Int):
-        let i: Int = max(0, _o - o_)
-        #debug_assert(i < 0 or i >= self._size, "OUT OF BOUNDS (clear range)")
-        memset_zero(self._data.offset(o_), i) # clears index >= o_, and < _o
+    fn clear(self, start: Int, end: Int):
+        let count: Int = max(0, start - end)
+        #debug_assert(count >= self._size, "OUT OF BOUNDS (clear range)")
+        memset_zero(self._data.offset(start), count) # clears index >= i_, and < _i
     
     @always_inline
     fn splat(self, o: T):

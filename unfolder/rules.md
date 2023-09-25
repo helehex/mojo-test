@@ -1,3 +1,5 @@
+
+
 Unfolder Rule:
 - Nodes are considered self-edges
 - Starting at node `N` in graph `G`, and using un-directed edges, track all possible paths which end on a repeated node.

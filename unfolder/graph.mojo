@@ -3,9 +3,6 @@ from array import Array
 from table import Table, Row
 
 
-#------ Unfolder-Loop Graph, constructed from a previous step, or a history
-#--- nodes are considered self-edges
-#---
 struct Graph:
     var width: Int            # known,   = count_n-1.. at least for unfolder part 1
     var depth: Int            # unknown, < width + 1
@@ -18,10 +15,10 @@ struct Graph:
     var nodes: Table[Int]     # x = space, y = time     Int ~ unsorted id     accessed by [previous_node_index, depth]     0 = no node, {node_index + 1} = node
     var edges: Table[Int]     # x = edges, y = nodes    Int ~ weight          accessed by [node_index, node_index]         0 = no edge, {weight} = edge
     
-    var weights: Array[Int]   # the nodes weights, can represent the self loop. *-- not necessary for unfolder loop, but i'll keep it here as an example for normal unfolder
-    var bounds: Array[Ind[2]]   # point[0] = edge_start, point[1] = edge_end
+    var weights: Array[Int]   # the nodes weights, can represent the self loop
+    var bounds: Array[Ind[2]] # point[0] = edge_start, point[1] = edge_end
     
-    var _xy_id: Array[Ind[2]]   # to_point[unsorted id] = table coordinates
+    var _xy_id: Array[Ind[2]] # to_point[unsorted id] = table coordinates
     var _lb_id: Array[Int]    # to_label[unsorted id] = sorted id
     var _id_lb: Array[Int]    # to_index[sorted id] = unsorted id
 

@@ -15,6 +15,10 @@ fn follow(*history: Int) -> Graph: #--------- follow origin history, and return 
     return result^
     
 
+#------ Unfolder-Loop Graph, constructed from a previous step, or a history
+#--- nodes are considered self-edges
+#--- weights are unecessary
+#---
 fn unfold(seed: Graph, origin: Int) -> Graph:
     
     let width: Int = seed.node_count # width of the resulting graph = node count of this graph
