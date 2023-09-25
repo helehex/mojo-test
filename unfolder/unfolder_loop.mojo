@@ -7,19 +7,27 @@ from table import Table, Row
 from graph import Graph
 
 
+#------ Unfolder-Loop Graph, constructed from a previous step, or a history ------#
+#---
+#--- nodes are considered self-edges
+#--- weights are unecessary
+#---
+#--- the result this process has, is basically extending every directed loop by 1, accounting for nodes being self-loops
+#--- however, there is a very small amount of variance with origin choice; [1,1,1,3] !~ [1,1,1,4], maybe this determines where you extended each loop from, that sounds about right
+#--- there is only ever one path to get from one node to another (without over repeating)
+#--- i dont think origin choice should affect node count, unlike unfolder 1
+#---
+#--- max_edge_out = GStep - 1?
+#---
 fn follow(*history: Int) -> Graph: #--------- follow origin history, and return the resulting graph at the end
     let hist: Para[Int] = Para[Int](history)
     var result: Graph = Graph()
     for i in range(len(hist)):
         result = unfold(result,hist[i])
     return result^
-    
 
-#------ Unfolder-Loop Graph, constructed from a previous step, or a history
-#--- nodes are considered self-edges
-#--- weights are unecessary
-#---
-fn unfold(seed: Graph, origin: Int) -> Graph:
+
+fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with respect to an origin node
     
     let width: Int = seed.node_count # width of the resulting graph = node count of this graph
     
@@ -97,7 +105,6 @@ fn unfold(seed: Graph, origin: Int) -> Graph:
         
     @parameter #--- pop trace, and update mask
     fn _pop():
-        
         max_depth = max(depth, max_depth)  # check for max depth before pop
         depth -= 1                         # decrement depth
         mask[o_] = 0                       # set mask back to 0
@@ -147,8 +154,8 @@ fn unfold(seed: Graph, origin: Int) -> Graph:
         edges[t_t] += 1
         
     _crawl()
-    _ = trace
-    _ = mask
+    _ = trace # keep trace and mask alive for the duration of the crawl
+    _ = mask  #---
     depth = max_depth + 1
     #---
     #---

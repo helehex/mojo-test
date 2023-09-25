@@ -3,6 +3,13 @@ from array import Array
 from table import Table, Row
 
 
+#------------ node-edge Graph
+#---
+#------ uses a sparse optimized edge matrix/table
+#------ the unfolder uses the bounds property to sparse optimize the crawl
+#------ edge table's memory layout is not currently optimized sparsely
+#------* mostly just a container (without much interface currently) which the unfolder uses
+#---
 struct Graph:
     var width: Int            # known,   = count_n-1.. at least for unfolder part 1
     var depth: Int            # unknown, < width + 1
@@ -87,7 +94,7 @@ struct Graph:
         self._id_lb = other._id_lb
 
 
-    #------ index conversions ------#
+    #------ lookups ------#
 
     @always_inline
     fn id_xy(self, xy: Ind[2]) -> Int: return self.nodes[xy].__int__() - 1  # node-coordinates to node-id
@@ -103,7 +110,7 @@ struct Graph:
     fn lb_id(self, id: Int) -> Int: return self._lb_id[id]                  # node-id to node_label
 
 
-    #------ format as a set of relations ------#
+    #------ format ------#
 
     fn str_relations(o: Graph) -> String:
         var s: String = "{"
