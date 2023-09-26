@@ -5,19 +5,30 @@ from graph import Graph
 from hio import _print, _str
 
 
+# program entry point
 fn main():
-    unfolder_loop_test()
+    unfolder_test()
     #array_test()
     #table_test()
 
 
-#------ unfolder_loop test ------
+#------ unfolder test ------#
+
+fn unfolder_test():
+    import unfolder as uf
+
+    let g: Graph = uf.follow[uf.unfold](1,1,1,1,1)
+    #print(g.str_relations())
+    print(_str(g))
+
+
+#------ unfolder_loop test ------#
 
 fn unfolder_loop_test():
-    import unfolder_loop as ufl
+    import unfolder as uf
 
-    let g: Graph = ufl.follow(1,1,1,1,1)
-    print(g.str_relations())
+    let g: Graph = uf.follow[uf.unfold_loop](1,1,1,3)
+    #print(g.str_relations())
     print(_str(g))
 
 
