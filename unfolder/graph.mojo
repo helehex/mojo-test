@@ -1,3 +1,4 @@
+from math import min, max
 from utils.index import StaticIntTuple as Ind
 from array import Array
 from table import Table, Row
@@ -32,6 +33,7 @@ struct Graph:
 
     #------ life ------#
     
+    #--- initialize empty
     fn __init__(inout self):
         self.width = 0
         self.depth = 0
@@ -46,38 +48,59 @@ struct Graph:
         self._xy_id = Array[Ind[2]]()
         self._lb_id = Array[Int]()
         self._id_lb = Array[Int]()
-        
-    fn __init__
-        (
+    
+    #--- initialize with node and edge data, then compute bounds and labels
+    fn __init__(
         inout self,
-        width: Int,
-        depth: Int,
-        node_count: Int,
-        edge_count: Int,
-        max_edge_out: Int,
         owned history: Array[Int],
         owned nodes: Table[Int],
         owned edges: Table[Int],
         owned weights: Array[Int],
-        owned bounds: Array[Ind[2]],
-        owned _xy_id: Array[Ind[2]],
-        owned _lb_id: Array[Int],
-        owned _id_lb: Array[Int]
-        ):
-        self.width = width
-        self.depth = depth
-        self.node_count = node_count
-        self.edge_count = edge_count
-        self.max_edge_out = max_edge_out
+        owned _xy_id: Array[Ind[2]]):
+
+        # set knowns
+        self.width = nodes._cols
+        self.depth = nodes._rows
+        self.node_count = edges._cols
+        self.edge_count = 0
+        self.max_edge_out = 0
         self.history = history
         self.nodes = nodes
         self.edges = edges
+        self.bounds = Array[Ind[2]](self.node_count)
         self.weights = weights
-        self.bounds = bounds
         self._xy_id = _xy_id
-        self._lb_id = _lb_id
-        self._id_lb = _id_lb
-        
+        self._lb_id = Array[Int](self.node_count)
+        self._id_lb = Array[Int](self.node_count + 1)
+
+        # find edge_start and edge_limit for each nodes edge row, and count edges
+        for y in range(self.node_count):
+            let row = Row(self.edges,y)
+            var start: Int = self.node_count
+            var limit: Int = 0
+            var edge_out: Int = 0
+            for x in range(self.node_count):
+                if row[x] > 0:
+                    self.edge_count += 1
+                    edge_out += 1
+                    start = min(x, start)
+                    limit = max(x, limit)
+            self.max_edge_out = max(edge_out, self.max_edge_out)
+            self.bounds[y] = Ind[2](start, limit + 1)
+
+        # label nodes chronologically. the main proccess usually confuses the node labeling, so this helps keep history consitent
+        var l: Int = 0
+        for y in range(self.depth):
+            for x in range(self.width):
+                var i: Int = self.nodes[Ind[2](x,y)] # the tables entry at x,y
+                if i > 0:
+                    i -= 1
+                    l += 1
+                    self._id_lb[l] = i
+                    self._lb_id[i] = l
+
+
+    #--- move
     fn __moveinit__(inout self, owned other: Self):
         self.width = other.width
         self.depth = other.depth
@@ -110,15 +133,15 @@ struct Graph:
     fn lb_id(self, id: Int) -> Int: return self._lb_id[id]                  # node-id to node_label
 
 
-    #------ format ------#
+    #------ string ------#
 
-    fn str_relations(o: Graph) -> String:
+    fn str_relations(self) -> String: #--- returns a string formatted as a set of relations: {1->2, 2->3, 3->0,...}
         var s: String = "{"
-        for y in range(o.node_count):
-            let start: Int = o.bounds[y][0]
-            let limit: Int = o.bounds[y][1]
+        for y in range(self.node_count):
+            let start: Int = self.bounds[y][0]
+            let limit: Int = self.bounds[y][1]
             for x in range(start, limit):
-                if o.edges[Ind[2](x,y)] > 0:
+                if self.edges[Ind[2](x,y)] > 0:
                     if len(s) != 1: s += ", "
-                    s += String(o.lb_id(y))+"->"+String(o.lb_id(x))
+                    s += String(self.lb_id(y))+"->"+String(self.lb_id(x))
         return s + "}"
