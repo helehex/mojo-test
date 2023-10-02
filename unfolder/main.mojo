@@ -7,8 +7,7 @@ from hio import _print, _str
 
 # program entry point
 fn main():
-    print(Ind[2](10,2).flattened_length())
-    #unfolder_test()
+    unfolder_test()
     #array_test()
     #table_test()
 

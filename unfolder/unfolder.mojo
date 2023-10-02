@@ -21,7 +21,7 @@ fn follow[rule: fn(Graph,Int)->Graph](*history: Int) -> Graph: #--------- follow
 
 
 
-#------ Unfolder-Loop Rule ------#
+#------ Unfolder Rule ------#
 #---
 #--- nodes are considered self-edges
 #---

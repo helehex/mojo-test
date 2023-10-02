@@ -1,7 +1,11 @@
 
-# bug?
+# this is a bug, it will be fixed in next mojo update
 fn main():
 
+    for j in range(5,11):
+        for i in range(8, j):
+            print("8,", j, " ~", i)
+    
     for i in range(8, 5):
         print("8,5 ~ ", i) #--- prints nothing
 
@@ -19,7 +23,9 @@ fn main():
 
     for i in range(8, 10):
         print("8,10 ~ ", i) #--- prints 8, 9
+    
 
+    
     # alias a: Int = factorial(6)
     # print(factorial(0))
 
@@ -43,16 +49,7 @@ fn factorial[n: Int]() -> Int:
 
 fn factorial(n: Int) -> Int:
     var result: Int = 1
-
-    for i in range(2, n+1):
-        result *= i
-    
-    @parameter
-    if constrain:
-        if n < 0:
-            print("negative integer factorial is undefined")
-            return 0
-    
+    for i in range(2, n+1): result *= i
     return result
 
 fn arithmetic[n: Int, d: Int]() -> Int:
