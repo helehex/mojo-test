@@ -1,16 +1,48 @@
 
 # theres only one way to arrange zero things now
 fn main():
-     #alias a: Int = factorial(6)
-     print(factorial(0))
+    alias a: IntLiteral = factorial(40)//factorial(19)
+    print(a)
+
+fn factorial(n: IntLiteral) -> IntLiteral:
+    var result: IntLiteral = 1
+    var i: IntLiteral = 2
+    while i < n+1:
+        result *= i
+        i += 1
+    return result
+
+fn factorial(n: Int) -> Int:
+    var result: Int = 1
+    for i in range(2, n+1): result *= i
+    return result
+
+fn arithmetic[d: Int](n: Int) -> Int:
+    var result: Int = n
+
+    @parameter
+    fn _product[i: Int]():
+        alias m: Int = i - d
+        result *= n - m
+
+    alias count = d - 1
+    unroll[count, _product]()
+    return result
+
+#n(n-1)(n-2)(n-3)..(n-d-1)/d!
+fn simplicial[d: Int](n: Int) -> Int:
+    return arithmetic[d](n)//factorial(d)
+
+
+
 
 
 
 from algorithm.functional import unroll
 alias constrain: Bool = False
-
-fn factorial[n: Int]() -> Int:
-    var result: Int = 1
+'''
+fn factorial[n: IntLiteral]() -> IntLiteral:
+    var result: IntLiteral = 1
 
     @parameter
     fn product[i: Int]():
@@ -21,33 +53,7 @@ fn factorial[n: Int]() -> Int:
     unroll[count, product]()
     constrained[constrain == False or n >= 0, "negative integer factorial is undefined"]()
     return result
-
-fn factorial(n: Int) -> Int:
-    var result: Int = 1
-    for i in range(2, n+1): result *= i
-    return result
-
-fn arithmetic[n: Int, d: Int]() -> Int:
-    var result: Int = n
-
-    @parameter
-    fn product[i: Int]():
-        alias m: Int = n - (d + 1)
-        result *= m
-
-    alias count = d - 1
-    unroll[count, product]()
-    return result
-
-#n(n-1)(n-2)(n-3)..(n-d-1)/d!
-fn simplicial[n:Int, d: Int]() -> Int:
-    return arithmetic[n,d]()//factorial[d]()
-
-
-
-
-
-
+'''
 '''
 from algorithm.functional import unroll
 alias constrain: Bool = False
