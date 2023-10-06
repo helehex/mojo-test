@@ -1,33 +1,8 @@
 
-# this is a bug, it will be fixed in next mojo update
+# theres only one way to arrange zero things now
 fn main():
-
-    for j in range(5,11):
-        for i in range(8, j):
-            print("8,", j, " ~", i)
-    
-    for i in range(8, 5):
-        print("8,5 ~ ", i) #--- prints nothing
-
-    for i in range(8, 6):
-        print("8,6 ~ ", i) #--- prints nothing
-
-    for i in range(8, 7):
-        print("8,7 ~ ", i) #--- prints 8
-
-    for i in range(8, 8):
-        print("8,8 ~ ", i) #--- prints nothing
-
-    for i in range(8, 9):
-        print("8,9 ~ ", i) #--- prints 8
-
-    for i in range(8, 10):
-        print("8,10 ~ ", i) #--- prints 8, 9
-    
-
-    
-    # alias a: Int = factorial(6)
-    # print(factorial(0))
+     #alias a: Int = factorial(6)
+     print(factorial(0))
 
 
 
