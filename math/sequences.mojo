@@ -1,13 +1,13 @@
 
 # theres only one way to arrange zero things now
 fn main():
-    alias a: IntLiteral = factorial(40)//factorial(39)
-    let b: Int = simplicial[2](6)
+    alias a: IntLiteral = factorial[40]()//factorial[39]()
+    let b: Int = simplicial(2, 6)
     print(a)
     print(b)
-    print(pascal(5,2))
+    print(pascal(12,6)) # 924
 
-fn factorial(n: IntLiteral) -> IntLiteral:
+fn factorial[n: IntLiteral]() -> IntLiteral:
     var result: IntLiteral = 1
     var i: IntLiteral = 2
     while i < n+1:
@@ -20,14 +20,28 @@ fn factorial(n: Int) -> Int:
     for i in range(2, n+1): result *= i
     return result
 
+fn permutial[n: IntLiteral, r: IntLiteral]() -> IntLiteral:
+    alias start = (n-r) + 1
+    var result: IntLiteral = 1
+    var i: IntLiteral = start
+    while i < n+1:
+        result *= i
+        i += 1
+    return result
+
 fn permutial(n: Int, r: Int) -> Int:
     var result: Int = 1
     for i in range((n-r)+1, n+1): result *= i
     return result
 
-#n(n-1)(n-2)(n-3)..(n-d-1)/d!
-fn simplicial[d: Int](n: Int) -> Int:
+fn simplicial[d: IntLiteral, n: IntLiteral]() -> IntLiteral:
+    return permutial[n, d]()//factorial[d]()
+
+fn simplicial(d: Int, n: Int) -> Int:
     return permutial(n, d)//factorial(d)
+
+fn pascal[n: IntLiteral, r: IntLiteral]() -> IntLiteral:
+    return permutial[n, r]()//factorial[r]()
 
 fn pascal(n: Int, r: Int) -> Int:
     return permutial(n, r)//factorial(r)
