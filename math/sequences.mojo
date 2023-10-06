@@ -1,8 +1,10 @@
 
 # theres only one way to arrange zero things now
 fn main():
-    alias a: IntLiteral = factorial(40)//factorial(19)
+    alias a: IntLiteral = factorial(40)//factorial(39)
+    let b: Int = simplicial[3](6)
     print(a)
+    print(b)
 
 fn factorial(n: IntLiteral) -> IntLiteral:
     var result: IntLiteral = 1
@@ -22,11 +24,9 @@ fn arithmetic[d: Int](n: Int) -> Int:
 
     @parameter
     fn _product[i: Int]():
-        alias m: Int = i - d
-        result *= n - m
+        result *= n - (i + 1)
 
-    alias count = d - 1
-    unroll[count, _product]()
+    unroll[d - 1, _product]()
     return result
 
 #n(n-1)(n-2)(n-3)..(n-d-1)/d!
