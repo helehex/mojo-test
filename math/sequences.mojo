@@ -2,7 +2,7 @@
 # theres only one way to arrange zero things now
 fn main():
     alias a: IntLiteral = factorial(40)//factorial(39)
-    let b: Int = simplicial[3](6)
+    let b: Int = simplicial[2](6)
     print(a)
     print(b)
 
@@ -19,19 +19,14 @@ fn factorial(n: Int) -> Int:
     for i in range(2, n+1): result *= i
     return result
 
-fn arithmetic[d: Int](n: Int) -> Int:
-    var result: Int = n
-
-    @parameter
-    fn _product[i: Int]():
-        result *= n - (i + 1)
-
-    unroll[d - 1, _product]()
+fn permutial(n: Int, r: Int) -> Int:
+    var result: Int = 1
+    for i in range((n-r)+1, n+1): result *= i
     return result
 
 #n(n-1)(n-2)(n-3)..(n-d-1)/d!
 fn simplicial[d: Int](n: Int) -> Int:
-    return arithmetic[d](n)//factorial(d)
+    return permutial(n, d)//factorial(d)
 
 
 
