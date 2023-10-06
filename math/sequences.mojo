@@ -1,3 +1,20 @@
+from utils.index import StaticIntTuple as Ind
+from algorithm.functional import unroll
+alias constrain: Bool = False
+
+'''
+alias factorial64 = lookup_gen[factorial_literal]()
+
+# automatic runtime lookup-table generation for Integer sequences
+fn lookup_gen[seq: fn(IntLiteral)->IntLiteral, depth: Int = 0]() -> Ind[max_representable[factorial]()]:
+
+fn lookup_gen[seq: fn(IntLiteral, IntLiteral)->IntLiteral, depth_x: IntLiteral = 0, depth_y: IntLiteral = 0]():
+    if !depth_x or !depth_y:
+        pass # auto-depth detection (stops at Int64 limit)
+
+fn factorial_lookup(n: Int) -> Int:
+    return factorial64
+'''
 
 # theres only one way to arrange zero things now
 fn main():
@@ -5,9 +22,13 @@ fn main():
     let b: Int = simplicial(2, 6)
     print(a)
     print(b)
-    print(pascal(12,6)) # 924
+    alias c: IntLiteral = pascal[12,6]()
+    print(c) # 924
 
 fn factorial[n: IntLiteral]() -> IntLiteral:
+    return factorial_literal(n)
+
+fn factorial_literal(n: IntLiteral) -> IntLiteral:
     var result: IntLiteral = 1
     var i: IntLiteral = 2
     while i < n+1:
@@ -45,59 +66,3 @@ fn pascal[n: IntLiteral, r: IntLiteral]() -> IntLiteral:
 
 fn pascal(n: Int, r: Int) -> Int:
     return permutial(n, r)//factorial(r)
-
-
-
-
-
-from algorithm.functional import unroll
-alias constrain: Bool = False
-'''
-fn factorial[n: IntLiteral]() -> IntLiteral:
-    var result: IntLiteral = 1
-
-    @parameter
-    fn product[i: Int]():
-        alias m: Int = i + 2
-        result *= m
-
-    alias count = n - 1
-    unroll[count, product]()
-    constrained[constrain == False or n >= 0, "negative integer factorial is undefined"]()
-    return result
-'''
-'''
-from algorithm.functional import unroll
-alias constrain: Bool = False
-
-fn factorial[n: Int]() -> Int:
-    var result: Int = 1
-
-    @parameter
-    fn mul[i: Int]():
-        alias m: Int = i + 2
-        result *= m
-
-    alias count = n - 1
-    unroll[count, mul]()
-    constrained[constrain == False or n >= 0, "negative integer factorial is undefined"]()
-    return result
-
-fn factorial2[n: Int]() -> Int:
-    var result: Int = 1
-    @parameter
-    if n > 1:
-        @unroll
-        for i in range(2, n+1): result *= i
-    return result
-
-@always_inline
-fn factorial3[n: IntLiteral]() -> IntLiteral:
-    @parameter
-    if n < 2:
-        return IntLiteral(1)
-    return n*factorial3[n-1]()
-'''
-
-# array stuff?
-# auto table lookup generation for runtime?
