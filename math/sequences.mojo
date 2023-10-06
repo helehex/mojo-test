@@ -5,6 +5,7 @@ fn main():
     let b: Int = simplicial[2](6)
     print(a)
     print(b)
+    print(pascal(5,2))
 
 fn factorial(n: IntLiteral) -> IntLiteral:
     var result: IntLiteral = 1
@@ -28,6 +29,8 @@ fn permutial(n: Int, r: Int) -> Int:
 fn simplicial[d: Int](n: Int) -> Int:
     return permutial(n, d)//factorial(d)
 
+fn pascal(n: Int, r: Int) -> Int:
+    return permutial(n, r)//factorial(r)
 
 
 
