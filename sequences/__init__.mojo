@@ -20,7 +20,26 @@ alias pho  : FloatLiteral = 0.61803398874989484820 # 1-sqrt(5) / -2
 from utils.index import StaticIntTuple as Ind
 from algorithm.functional import unroll
 
-'''
+"""
+@value
+@register_passable("trivial")
+struct MySIMD[dt: DType, sw: Int]:
+    var value: SIMD[dt,sw]
+    
+    @always_inline
+    fn __init__[_sw: Int](val: SIMD[dt,_sw]) -> Self:
+        return Self{value:val.value}
+    
+
+#let a: MySIMD[DType.float32,1] = SIMD[DType.float32,1](7)
+let b: MySIMD[DType.float32,4] = SIMD[DType.float32,4](6)
+#let c: MySIMD[DType.float32,8] = SIMD[DType.float32,1](5)
+
+#print(a.value)
+print(b.value)
+#print(c.value)
+"""
+"""
 alias constrain: Bool = False
 alias factorial64 = lookup_gen[factorial_literal]()
 
@@ -33,7 +52,7 @@ fn lookup_gen[seq: fn(IntLiteral, IntLiteral)->IntLiteral, depth_x: IntLiteral =
 
 fn factorial_lookup(n: Int) -> Int:
     return factorial64
-'''
+"""
 
 fn factorial[n: IntLiteral]() -> IntLiteral:
     return factorial_literal(n)
