@@ -131,17 +131,3 @@ struct Graph:
     fn xy_id(self, id: Int) -> Ind[2]: return self._xy_id[id]               # node-id to node-coordinates
     @always_inline
     fn lb_id(self, id: Int) -> Int: return self._lb_id[id]                  # node-id to node_label
-
-
-    #------ string ------#
-
-    fn str_relations(self) -> String: #--- returns a string formatted as a set of relations: {1->2, 2->3, 3->0,...}
-        var s: String = "{"
-        for y in range(self.node_count):
-            let start: Int = self.bounds[y][0]
-            let limit: Int = self.bounds[y][1]
-            for x in range(start, limit):
-                if self.edges[Ind[2](x,y)] > 0:
-                    if len(s) != 1: s += ", "
-                    s += String(self.lb_id(y))+"->"+String(self.lb_id(x))
-        return s + "}"
