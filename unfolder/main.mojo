@@ -17,7 +17,9 @@ fn main():
 fn unfolder_test():
     import unfolder as uf
 
+    # follows an origin history with rule `uf.unfold`
     let g: Graph = uf.follow[uf.unfold](1,1,1,3)
+    
     #print(g.str_relations())
     print(str_simple(g))
 
