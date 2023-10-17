@@ -1,1 +1,2 @@
 - automate writing to results
+- separate repo
