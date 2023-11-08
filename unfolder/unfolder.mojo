@@ -1,6 +1,5 @@
 from math import min, max
 from utils.vector import DynamicVector as List
-from utils.list import VariadicList as Para
 from utils.index import StaticIntTuple as Ind
 from array import Array
 from table import Table, Row
@@ -12,10 +11,9 @@ from graph import Graph
 #--- nodes are considered self-edges
 #---
 fn follow[rule: fn(Graph,Int)->Graph](*history: Int) -> Graph: #--------- follow origin history, and return the resulting graph at the end
-    let hist: Para[Int] = Para[Int](history)
     var result: Graph = Graph()
-    for i in range(len(hist)):
-        result = rule(result,hist[i])
+    for i in range(len(history)):
+        result = rule(result,history[i])
     return result^
 
 
