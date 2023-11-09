@@ -4,6 +4,10 @@ from table import Table, Row
 from graph import Graph
 from hio import print_, str_, str_simple, str_relations
 
+alias Ind2 = Ind[2]
+
+
+
 
 # program entry point
 fn main():
@@ -12,8 +16,10 @@ fn main():
     #table_test()
 
 
-#------ unfolder test ------#
 
+
+#------ unfolder test ------#
+#
 fn unfolder_test():
     import unfolder as uf
 
@@ -25,7 +31,7 @@ fn unfolder_test():
 
 
 #------ unfolder_loop test ------#
-
+#
 fn unfolder_loop_test():
     import unfolder as uf
 
@@ -34,14 +40,16 @@ fn unfolder_loop_test():
     print(str_(g))
 
 
-#------ array test ------#
 
+
+#------ array test ------#
+#
 fn array_test():
     let array_none: Array[Int] = Array[Int]()
     let array_zero: Array[Int] = Array[Int](0)
     var array_empty: Array[Int] = Array[Int](10)
     let array_splat: Array[Int] = Array[Int](6,73)
-    let row_ind: Array[Ind[2]] = Array[Ind[2]](6,Ind[2](7,8))
+    let row_ind: Array[Ind2] = Array[Ind2](6,Ind2(7,8))
     
     # append 1, then 2, to array_empty
     array_empty = Array[Int](array_empty,1)
@@ -52,12 +60,12 @@ fn array_test():
     print("Array[Int](size=10), then append 1 and 2:\n" + str_(array_empty), "\n")
     print("Array[Int](size=6, splat=73):\n" + str_(array_splat), "\n")
     
-    row_ind[2] = Ind[2](1,2)
-    print("Array[Ind[2]](size=6, splat=(7,8)), then set self[2] = (1,2):\n" + str_[2](row_ind), "\n")
+    row_ind[3] = Ind2(1,2)
+    print("Array[Ind2](size=6, splat=(7,8)), then set self[3] = (1,2):\n" + str_[2](row_ind), "\n")
 
 
 #------ table test ------#
-
+#
 fn table_test():
     let table_none: Table[Int] = Table[Int]()
     let table_zero: Table[Int] = Table[Int](0,0)
@@ -78,9 +86,9 @@ fn table_test():
     print("Create a new table, with 8 columns and 7 rows. populate with 1's, and splat a row of 3's:\n" + str_(table), "\n")
     
     var table2: Table[Int] = Table[Int](table) # copy entire table to new instance, table2
-    table2[Ind[2](5,5)] = 23
-    table2[Ind[2](2,5)] = 888 # set some values to table2
-    table2[Ind[2](3,1)] = 54
+    table2[Ind2(5,5)] = 23
+    table2[Ind2(2,5)] = 888 # set some values to table2
+    table2[Ind2(3,1)] = 54
     Row(table2,6).splat(31) # creating Row(table, row), and splatting(31), will affect table2
     print("Table 2, copied from table 1, then some values set:\n" + str_(table2), "\n")
     
@@ -95,6 +103,6 @@ fn table_test():
 
     table2 = Table[Int](6,10,table2)
     Row(table2,table2._rows - 1).clear()
-    table[Ind[2](0,0)] += 55
+    table[Ind2(0,0)] += 55
     print("Modifying that row will affect table 2. I also changed the dimensions of table 1:\n" + str_(table2), "\n")
     print("table 1:\n" + str_(table), "\n")

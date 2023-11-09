@@ -3,18 +3,25 @@ from utils.index import StaticIntTuple as Ind
 from array import Array
 from table import Table, Row
 
+alias Ind2 = Ind[2]
+
+
+
 
 #------------ node-edge Graph
 #---
 #------ uses a sparse optimized edge matrix/table
 #------ the unfolder uses the bounds property to sparse optimize the crawl
 #------ edge table's memory layout is not currently optimized sparsely
-#------* mostly just a container (without much interface currently) which the unfolder uses
+#------ mostly just a container (without much interface currently) which the unfolder uses
 #---
 struct Graph:
-    var width: Int            # known,   = count_n-1.. at least for unfolder part 1
-    var depth: Int            # unknown, < width + 1
-    var node_count: Int       # unknown, < (count_n-1) * (width + 1)
+
+    #------< Data >------#
+    #
+    var width: Int
+    var depth: Int
+    var node_count: Int
     var edge_count: Int
     var max_edge_out: Int
     
@@ -24,17 +31,17 @@ struct Graph:
     var edges: Table[Int]     # x = edges, y = nodes    Int ~ weight          accessed by [node_index, node_index]         0 = no edge, {weight} = edge
     
     var weights: Array[Int]   # the nodes weights, can represent the self loop
-    var bounds: Array[Ind[2]] # point[0] = edge_start, point[1] = edge_end
+    var bounds: Array[Ind2]   # Ind2[0] = edge_start, Ind2[1] = edge_end
     
-    var _xy_id: Array[Ind[2]] # to_point[unsorted id] = table coordinates
+    var _xy_id: Array[Ind2]   # to_point[unsorted id] = table coordinates
     var _lb_id: Array[Int]    # to_label[unsorted id] = sorted id
     var _id_lb: Array[Int]    # to_index[sorted id] = unsorted id
 
 
-    #------ life ------#
-    
-    #--- initialize empty
+    #------ lifetime ------#
+    #
     fn __init__(inout self):
+        #--- initialize empty
         self.width = 0
         self.depth = 0
         self.node_count = 0
@@ -44,20 +51,19 @@ struct Graph:
         self.nodes = Table[Int]()
         self.edges = Table[Int]()
         self.weights = Array[Int]()
-        self.bounds = Array[Ind[2]]()
-        self._xy_id = Array[Ind[2]]()
+        self.bounds = Array[Ind2]()
+        self._xy_id = Array[Ind2]()
         self._lb_id = Array[Int]()
         self._id_lb = Array[Int]()
     
-    #--- initialize with node and edge data, then compute bounds and labels
-    fn __init__(
-        inout self,
-        owned history: Array[Int],
-        owned nodes: Table[Int],
-        owned edges: Table[Int],
-        owned weights: Array[Int],
-        owned _xy_id: Array[Ind[2]]):
-
+    fn __init__(inout self, 
+    owned history: Array[Int], 
+    owned nodes: Table[Int], 
+    owned edges: Table[Int], 
+    owned weights: Array[Int], 
+    owned _xy_id: Array[Ind2]):
+        #--- initialize with node and edge data, then compute bounds and labels
+        
         # set knowns
         self.width = nodes._cols
         self.depth = nodes._rows
@@ -67,7 +73,7 @@ struct Graph:
         self.history = history
         self.nodes = nodes
         self.edges = edges
-        self.bounds = Array[Ind[2]](self.node_count)
+        self.bounds = Array[Ind2](self.node_count)
         self.weights = weights
         self._xy_id = _xy_id
         self._lb_id = Array[Int](self.node_count)
@@ -86,21 +92,19 @@ struct Graph:
                     start = min(x, start)
                     limit = max(x, limit)
             self.max_edge_out = max(edge_out, self.max_edge_out)
-            self.bounds[y] = Ind[2](start, limit + 1)
+            self.bounds[y] = Ind2(start, limit + 1)
 
         # label nodes chronologically. the main proccess usually confuses the node labeling, so this helps keep history consitent
         var l: Int = 0
         for y in range(self.depth):
             for x in range(self.width):
-                var i: Int = self.nodes[Ind[2](x,y)] # the tables entry at x,y
+                var i: Int = self.nodes[Ind2(x,y)] # the tables entry at x,y
                 if i > 0:
                     i -= 1
                     l += 1
                     self._id_lb[l] = i
                     self._lb_id[i] = l
 
-
-    #--- move
     fn __moveinit__(inout self, owned other: Self):
         self.width = other.width
         self.depth = other.depth
@@ -118,16 +122,16 @@ struct Graph:
 
 
     #------ lookups ------#
-
+    #
     @always_inline
-    fn id_xy(self, xy: Ind[2]) -> Int: return self.nodes[xy].__int__() - 1  # node-coordinates to node-id
+    fn id_xy(self, xy: Ind2) -> Int: return self.nodes[xy].__int__() - 1   # node-coordinates to node-id
     @always_inline
-    fn lb_xy(self, xy: Ind[2]) -> Int: return self._lb_id[self.id_xy(xy)]   # node-coordinates to node-label
+    fn lb_xy(self, xy: Ind2) -> Int: return self._lb_id[self.id_xy(xy)]    # node-coordinates to node-label
     @always_inline
-    fn id_lb(self, lb: Int) -> Int: return self._id_lb[lb]                  # node-label to node-id
+    fn id_lb(self, lb: Int) -> Int: return self._id_lb[lb]                 # node-label to node-id
     @always_inline
-    fn xy_lb(self, lb: Int) -> Ind[2]: return self._xy_id[self.id_lb(lb)]   # node-label to node-coordinates
+    fn xy_lb(self, lb: Int) -> Ind2: return self._xy_id[self.id_lb(lb)]    # node-label to node-coordinates
     @always_inline
-    fn xy_id(self, id: Int) -> Ind[2]: return self._xy_id[id]               # node-id to node-coordinates
+    fn xy_id(self, id: Int) -> Ind2: return self._xy_id[id]                # node-id to node-coordinates
     @always_inline
-    fn lb_id(self, id: Int) -> Int: return self._lb_id[id]                  # node-id to node_label
+    fn lb_id(self, id: Int) -> Int: return self._lb_id[id]                 # node-id to node_label

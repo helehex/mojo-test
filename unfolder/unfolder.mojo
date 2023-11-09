@@ -5,6 +5,10 @@ from array import Array
 from table import Table, Row
 from graph import Graph
 
+alias Ind2 = Ind[2]
+
+
+
 
 #------ Follow a history, using a rule (found below) ------#
 #---
@@ -39,7 +43,7 @@ fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with
             Table[Int](1,1,1), #------------------- nodes
             Table[Int](1,1,0), #------------------- edges
             Array[Int](1,1), #--------------------- weights
-            Array[Ind[2]](1,Ind[2](0,0)) #--------- _xy_id
+            Array[Ind2](1,Ind2(0,0)) #--------- _xy_id
             )
     
     # this graph has reached step > 1, start the crawling process
@@ -56,14 +60,14 @@ fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with
     var nodes: Table[Int] = Table[Int](width, depth_est)
     var edges: Table[Int] = Table[Int](node_est, node_est)
     var weights: Array[Int] = Array[Int](node_est)
-    var _xy_id: Array[Ind[2]] = Array[Ind[2]](node_est)
+    var _xy_id: Array[Ind2] = Array[Ind2](node_est)
     
     # add origin node
     var _o: Int = seed.id_lb(origin)
     
-    _xy_id[node_count] = Ind[2](_o,0)
+    _xy_id[node_count] = Ind2(_o,0)
     node_count += 1
-    nodes[Ind[2](_o,0)] = node_count
+    nodes[Ind2(_o,0)] = node_count
     weights[0] += 1
     
     #--- start crawling the seed graph, adding new nodes to this graph along the way
@@ -108,7 +112,7 @@ fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with
     @parameter
     fn _search() -> Bool:       # search through connected edges
         while _o < edge_limit:
-            if seed.edges[Ind[2](_o,o_)] > 0 and _check():
+            if seed.edges[Ind2(_o,o_)] > 0 and _check():
                 _reach()
                 return False      # check succeeded, continue deeper
             _o += 1
@@ -123,8 +127,8 @@ fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with
         
     @parameter
     fn _reach(): # the walk did not touch itself, try adding the reached node
-        let p_: Ind[2] = Ind[2](o_, depth - 1)
-        let _p: Ind[2] = Ind[2](_o, depth)
+        let p_: Ind2 = Ind2(o_, depth - 1)
+        let _p: Ind2 = Ind2(_o, depth)
         if nodes[_p] == 0:
             _xy_id[node_count] = _p
             node_count += 1
@@ -132,12 +136,12 @@ fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with
         let i_: Int = nodes[p_] - 1
         let _i: Int = nodes[_p] - 1
         weights[_i] += 1
-        edges[Ind[2](_i,i_)] += 1
-        edges[Ind[2](i_,_i)] += 1
+        edges[Ind2(_i,i_)] += 1
+        edges[Ind2(i_,_i)] += 1
         
     _crawl()
     _ = trace # keep trace and mask alive for the duration of the crawl
-    _ = mask  #---
+    _ = mask  # ^
     depth = max_depth + 1
     #---
     #---
@@ -150,7 +154,7 @@ fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with
         Table[Int](width, depth, nodes),
         Table[Int](node_count, node_count, edges),
         Array[Int](node_count, weights),
-        Array[Ind[2]](node_count, _xy_id))
+        Array[Ind2](node_count, _xy_id))
 
 
 
@@ -183,7 +187,7 @@ fn unfold_loop(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph
             Table[Int](1,1,1), #------------------- nodes
             Table[Int](1,1,0), #------------------- edges
             Array[Int](1,1), #--------------------- weights
-            Array[Ind[2]](1,Ind[2](0,0)) #--------- _xy_id
+            Array[Ind2](1,Ind2(0,0)) #--------- _xy_id
             )
     
     # this graph has reached step > 1, start the crawling process
@@ -200,14 +204,14 @@ fn unfold_loop(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph
     var nodes: Table[Int] = Table[Int](width, depth_est)
     var edges: Table[Int] = Table[Int](node_est, node_est)
     var weights: Array[Int] = Array[Int](node_est)
-    var _xy_id: Array[Ind[2]] = Array[Ind[2]](node_est)
+    var _xy_id: Array[Ind2] = Array[Ind2](node_est)
     
     # add origin node
     var _o: Int = seed.id_lb(origin)
     
-    _xy_id[node_count] = Ind[2](_o,0)
+    _xy_id[node_count] = Ind2(_o,0)
     node_count += 1
-    nodes[Ind[2](_o,0)] = node_count
+    nodes[Ind2(_o,0)] = node_count
     weights[0] += 1
     
     #--- start crawling the seed graph, adding new nodes to this graph along the way
@@ -252,7 +256,7 @@ fn unfold_loop(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph
     @parameter
     fn _search() -> Bool:       # search through connected edges
         while _o < edge_limit:
-            if seed.edges[Ind[2](_o,o_)] > 0 and _check():
+            if seed.edges[Ind2(_o,o_)] > 0 and _check():
                 _reach()
                 return False      # check succeeded, continue deeper
             _o += 1
@@ -267,8 +271,8 @@ fn unfold_loop(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph
         
     @parameter
     fn _reach(): # the walk did not touch itself, try adding the reached node
-        let p_: Ind[2] = Ind[2](o_, depth - 1)
-        let _p: Ind[2] = Ind[2](_o, depth)
+        let p_: Ind2 = Ind2(o_, depth - 1)
+        let _p: Ind2 = Ind2(_o, depth)
         if nodes[_p] == 0:
             _xy_id[node_count] = _p
             node_count += 1
@@ -276,18 +280,18 @@ fn unfold_loop(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph
         let i_: Int = nodes[p_] - 1
         let _i: Int = nodes[_p] - 1
         weights[_i] += 1
-        edges[Ind[2](_i,i_)] += 1
+        edges[Ind2(_i,i_)] += 1
         
     @parameter
     fn _touch(): # the check has completed a loop, add a previously unrealized node
         _reach()
-        let t_: Int = nodes[Ind[2](_o, depth)] - 1
-        let _t: Int = nodes[Ind[2](_o, mask[_o] - 1)] - 1
-        edges[Ind[2](_t,t_)] += 1
+        let t_: Int = nodes[Ind2(_o, depth)] - 1
+        let _t: Int = nodes[Ind2(_o, mask[_o] - 1)] - 1
+        edges[Ind2(_t,t_)] += 1
         
     _crawl()
     _ = trace # keep trace and mask alive for the duration of the crawl
-    _ = mask  #---
+    _ = mask  # ^
     depth = max_depth + 1
     #---
     #---
@@ -300,4 +304,4 @@ fn unfold_loop(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph
         Table[Int](width, depth, nodes),
         Table[Int](node_count, node_count, edges),
         Array[Int](node_count, weights),
-        Array[Ind[2]](node_count, _xy_id))
+        Array[Ind2](node_count, _xy_id))
