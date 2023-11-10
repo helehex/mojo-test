@@ -3,7 +3,7 @@ import benchmark
 
 fn main():
     from random import random_si64
-    it = random_si64(98,102).value
+    loops = random_si64(98,102).value
 
     print("\n#---  -1  ---#")
     print("auto   : ", benchmark.run[auto[DType.index,-1]]().mean["ns"]())
@@ -36,60 +36,60 @@ fn main():
 
 
 
-var it: Int = 100
+var loops: Int = 100
 
 fn auto[dt: DType, m: Int]():
-    for u in range(it):
+    for u in range(loops):
         var o: Auto[dt, m] = Auto[dt, m](1,1)
-        for i in range(it): o = o + Auto[dt, m](i,u)
+        for i in range(loops): o = o + Auto[dt, m](i,u)
         benchmark.keep(o)
 
 fn manual_negate():
-    for u in range(it):
+    for u in range(loops):
         var o: ManualNegate = ManualNegate(1,1)
-        for i in range(it): o = o + ManualNegate(i,u)
+        for i in range(loops): o = o + ManualNegate(i,u)
         benchmark.keep(o)
 
 fn manual_zero():
-    for u in range(it):
+    for u in range(loops):
         var o: ManualZero = ManualZero(1,1)
-        for i in range(it): o = o + ManualZero(i,u)
+        for i in range(loops): o = o + ManualZero(i,u)
         benchmark.keep(o)
 
 fn manual_one():
-    for u in range(it):
+    for u in range(loops):
         var o: ManualOne = ManualOne(1,1)
-        for i in range(it): o = o + ManualOne(i,u)
+        for i in range(loops): o = o + ManualOne(i,u)
         benchmark.keep(o)
 
 fn manual_two():
-    for u in range(it):
+    for u in range(loops):
         var o: ManualTwo = ManualTwo(1,1)
-        for i in range(it): o = o + ManualTwo(i,u)
+        for i in range(loops): o = o + ManualTwo(i,u)
         benchmark.keep(o)
 
 fn manual_negate_f():
-    for u in range(it):
+    for u in range(loops):
         var o: ManualNegateF = ManualNegateF(1,1)
-        for i in range(it): o = o + ManualNegateF(i,u)
+        for i in range(loops): o = o + ManualNegateF(i,u)
         benchmark.keep(o)
 
 fn manual_zero_f():
-    for u in range(it):
+    for u in range(loops):
         var o: ManualZeroF = ManualZeroF(1,1)
-        for i in range(it): o = o + ManualZeroF(i,u)
+        for i in range(loops): o = o + ManualZeroF(i,u)
         benchmark.keep(o)
 
 fn manual_one_f():
-    for u in range(it):
+    for u in range(loops):
         var o: ManualOneF = ManualOneF(1,1)
-        for i in range(it): o = o + ManualOneF(i,u)
+        for i in range(loops): o = o + ManualOneF(i,u)
         benchmark.keep(o)
 
 fn manual_two_f():
-    for u in range(it):
+    for u in range(loops):
         var o: ManualTwoF = ManualTwoF(1,1)
-        for i in range(it): o = o + ManualTwoF(i,u)
+        for i in range(loops): o = o + ManualTwoF(i,u)
         benchmark.keep(o)
 
 
