@@ -4,8 +4,6 @@ import benchmark
 # ? keep[anytype]() only works with existing variable, unlike keep[Int]()
 
 
-# the previous way i had this, floats were even slower, and autoZeroF was the only thing slower than the auto counterpart. now they are all the same...
-# should probably just look at compiled code or something
 
 
 fn main():
@@ -18,35 +16,35 @@ fn main():
     fn auto[dt: DType, m: Int]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: Auto[dt, m] = Auto[dt, m](i1,i2)
+                var o: Auto[dt, m] = Auto[dt, m](i1,i2) + Auto[dt, m](i2,i1)
                 benchmark.keep(o)
 
     @parameter
     fn manual_negate[dt: DType]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: ManualNegate[dt] = ManualNegate[dt](i1,i2)
+                var o: ManualNegate[dt] = ManualNegate[dt](i1,i2) + ManualNegate[dt](i2,i1)
                 benchmark.keep(o)
 
     @parameter
     fn manual_zero[dt: DType]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: ManualZero[dt] = ManualZero[dt](i1,i2)
+                var o: ManualZero[dt] = ManualZero[dt](i1,i2) + ManualZero[dt](i2,i1)
                 benchmark.keep(o)
 
     @parameter
     fn manual_one[dt: DType]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: ManualOne[dt] = ManualOne[dt](i1,i2)
+                var o: ManualOne[dt] = ManualOne[dt](i1,i2) + ManualOne[dt](i2,i1)
                 benchmark.keep(o)
 
     @parameter
     fn manual_two[dt: DType]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: ManualTwo[dt] = ManualTwo[dt](i1,i2)
+                var o: ManualTwo[dt] = ManualTwo[dt](i1,i2) + ManualTwo[dt](i2,i1)
                 benchmark.keep(o)
     
 
@@ -93,21 +91,21 @@ struct Auto[dt: DType, m: Int]:
     var v1: SIMD[dt,1]
     var v2: SIMD[dt,1]
     fn __add__(self, other: Self) -> Self:
-        return Self(self.v1 + other.v1, m*(self.v2 + other.v2))
+        return Self(m*(self.v1 + other.v1), m*(self.v2 + other.v2))
 
 @value
 struct ManualNegate[dt: DType]:
     var v1: SIMD[dt,1]
     var v2: SIMD[dt,1]
     fn __add__(self, other: Self) -> Self:
-        return Self(self.v1 + other.v1, -(self.v2 + other.v2))
+        return Self(-(self.v1 + other.v1), -(self.v2 + other.v2))
 
 @value
 struct ManualZero[dt: DType]:
     var v1: SIMD[dt,1]
     var v2: SIMD[dt,1]
     fn __add__(self, other: Self) -> Self:
-        return Self(self.v1 + other.v1, 0)
+        return Self(0, 0)
 
 @value
 struct ManualOne[dt: DType]:
@@ -121,5 +119,6 @@ struct ManualTwo[dt: DType]:
     var v1: SIMD[dt,1]
     var v2: SIMD[dt,1]
     fn __add__(self, other: Self) -> Self:
+        let v1 = (self.v1 + other.v1)
         let v2 = (self.v2 + other.v2)
-        return Self(self.v1 + other.v1, v2 + v2)
+        return Self(v1 + v1, v2 + v2)
