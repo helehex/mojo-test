@@ -9,43 +9,55 @@ import benchmark
 fn main():
     from random import seed, random_si64
     seed()
-    let l1: Int = random_si64(98,102).value
-    let l2: Int = random_si64(98,102).value
+    let l1: Int = random_si64(31,39).value
+    let l2: Int = random_si64(31,39).value
+    let l3: Int = random_si64(31,39).value
+    let l4: Int = random_si64(31,39).value
 
     @parameter
     fn auto[dt: DType, m: Int]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: Auto[dt, m] = Auto[dt, m](i1,i2) + Auto[dt, m](i2,i1)
-                benchmark.keep(o)
+                for i3 in range(l3):
+                    for i4 in range(l4):
+                        var o: Auto[dt, m] = Auto[dt, m](i1,i2) + Auto[dt, m](i3,i4)
+                        benchmark.keep(o)
 
     @parameter
     fn manual_negate[dt: DType]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: ManualNegate[dt] = ManualNegate[dt](i1,i2) + ManualNegate[dt](i2,i1)
-                benchmark.keep(o)
+                for i3 in range(l3):
+                    for i4 in range(l4):
+                        var o: ManualNegate[dt] = ManualNegate[dt](i1,i2) + ManualNegate[dt](i3,i4)
+                        benchmark.keep(o)
 
     @parameter
     fn manual_zero[dt: DType]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: ManualZero[dt] = ManualZero[dt](i1,i2) + ManualZero[dt](i2,i1)
-                benchmark.keep(o)
+                for i3 in range(l3):
+                    for i4 in range(l4):
+                        var o: ManualZero[dt] = ManualZero[dt](i1,i2) + ManualZero[dt](i3,i4)
+                        benchmark.keep(o)
 
     @parameter
     fn manual_one[dt: DType]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: ManualOne[dt] = ManualOne[dt](i1,i2) + ManualOne[dt](i2,i1)
-                benchmark.keep(o)
+                for i3 in range(l3):
+                    for i4 in range(l4):
+                        var o: ManualOne[dt] = ManualOne[dt](i1,i2) + ManualOne[dt](i3,i4)
+                        benchmark.keep(o)
 
     @parameter
     fn manual_two[dt: DType]():
         for i1 in range(l1):
             for i2 in range(l2):
-                var o: ManualTwo[dt] = ManualTwo[dt](i1,i2) + ManualTwo[dt](i2,i1)
-                benchmark.keep(o)
+                for i3 in range(l3):
+                    for i4 in range(l4):
+                        var o: ManualTwo[dt] = ManualTwo[dt](i1,i2) + ManualTwo[dt](i3,i4)
+                        benchmark.keep(o)
     
 
     print()
@@ -100,6 +112,7 @@ struct ManualNegate[dt: DType]:
     fn __add__(self, other: Self) -> Self:
         return Self(-(self.v1 + other.v1), -(self.v2 + other.v2))
 
+# this should be faster than auto counterpart, floating propogation different
 @value
 struct ManualZero[dt: DType]:
     var v1: SIMD[dt,1]
