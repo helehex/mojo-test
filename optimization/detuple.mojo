@@ -48,14 +48,15 @@ fn main():
         for i in range(loops):
             benchmark.keep(variad(v1, v2, v3))
 
-    print("\n#--- 1 ---#")
+    print()
+    print("#--- 1 ---#")
     print("direct :", benchmark.run[direct1_test]().mean["ns"]())
     print("tuple  :", benchmark.run[tuple1_test]().mean["ns"]())
     print("direct :", benchmark.run[direct1_test]().mean["ns"]())
     print("tuple  :", benchmark.run[tuple1_test]().mean["ns"]())
     print()
-
-    print("\n#--- 2 ---#")
+    print()
+    print("#--- 2 ---#")
     print("direct :", benchmark.run[direct2_test]().mean["ns"]())
     print("tuple  :", benchmark.run[tuple2_test]().mean["ns"]())
     print("variad :", benchmark.run[variad2_test]().mean["ns"]())
@@ -63,8 +64,8 @@ fn main():
     print("tuple  :", benchmark.run[tuple2_test]().mean["ns"]())
     print("variad :", benchmark.run[variad2_test]().mean["ns"]())
     print()
-
-    print("\n#--- 3 ---#")
+    print()
+    print("#--- 3 ---#")
     print("direct :", benchmark.run[direct3_test]().mean["ns"]())
     print("tuple  :", benchmark.run[tuple3_test]().mean["ns"]())
     print("variad :", benchmark.run[variad3_test]().mean["ns"]())
