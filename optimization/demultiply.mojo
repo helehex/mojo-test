@@ -5,15 +5,14 @@ import benchmark
 
 
 fn main():
-    from random import seed, random_si64
+    from random import random_si64
 
-    seed()
     let loops: Int = random_si64(9999,10001).value
     let r1: Int = random_si64(9,11).value
     let r2: Int = random_si64(9,11).value
     let r3: Int = random_si64(9,11).value
     let r4: Int = random_si64(9,11).value
-    # inclusive range
+    #         very inclusive (9,11)
 
     @parameter
     fn auto[dt: DType, m: Int]():
@@ -117,6 +116,7 @@ struct Auto[dt: DType, m: Int]:
     fn __add__(self, other: Self) -> Self:
         return Self(m*(self.v1 + other.v1), m*(self.v2 + other.v2))
 
+# with hints not much changes in this case
 @value
 @register_passable
 struct Auto_[dt: DType, m: Int]:

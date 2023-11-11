@@ -3,11 +3,13 @@ import benchmark
 
 fn main():
     from random import random_si64
-    let loops: Int = random_si64(9998,10002).value
-    let v1: Int = random_si64(10,20).value
-    let v2: Int = random_si64(10,20).value
-    let v3: Int = random_si64(10,20).value
 
+    let loops: Int = random_si64(9999,10001).value
+    let v1: Int = random_si64(9,11).value
+    let v2: Int = random_si64(9,11).value
+    let v3: Int = random_si64(9,11).value
+    #         very inclusive (9,11)
+    
     @parameter
     fn direct1_test():
         for i in range(loops):
@@ -78,36 +80,29 @@ fn main():
 
 
 fn direct1(a: Float64) -> Float64:
-    benchmark.keep(a)
     return a
 
 fn tuple1(a: Tuple[Float64]) -> Float64:
-    benchmark.keep(a.get[0,Float64]())
     return a.get[0,Float64]()
 
 fn direct2(a1: Float64, a2: Float64) -> Float64:
-    benchmark.keep(a1)
     benchmark.keep(a2)
     return a1
 
 fn tuple2(a: Tuple[Float64, Float64]) -> Float64:
-    benchmark.keep(a.get[0,Float64]())
     benchmark.keep(a.get[1,Float64]())
     return a.get[0,Float64]()
 
 fn direct3(a1: Float64, a2: Float64, a3: Float64) -> Float64:
-    benchmark.keep(a1)
     benchmark.keep(a2)
     benchmark.keep(a3)
     return a1
 
 fn tuple3(a: Tuple[Float64, Float64, Float64]) -> Float64:
-    benchmark.keep(a.get[0,Float64]())
     benchmark.keep(a.get[1,Float64]())
     benchmark.keep(a.get[2,Float64]())
     return a.get[0,Float64]()
 
 fn variad(*a: Float64) -> Float64:
-    benchmark.keep(a[0])
     for i in range(1,len(a)): benchmark.keep(a[i])
     return a[0]
