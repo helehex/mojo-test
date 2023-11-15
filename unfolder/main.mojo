@@ -11,6 +11,7 @@ alias Ind2 = Ind[2]
 
 # program entry point
 fn main():
+    #import sequences
     unfolder_test()
     #array_test()
     #table_test()
@@ -21,10 +22,10 @@ fn main():
 #------ unfolder test ------#
 #
 fn unfolder_test():
-    import unfolder as uf
+    import rules
 
     # follows an origin history with rule `uf.unfold`
-    let g: Graph = uf.follow[uf.unfold](1,1,1,3)
+    let g: Graph = rules.follow[rules.unfold](1,1,1,3)
     
     #print(g.str_relations())
     print(str_simple(g))
@@ -33,9 +34,9 @@ fn unfolder_test():
 #------ unfolder_loop test ------#
 #
 fn unfolder_loop_test():
-    import unfolder as uf
+    import rules
 
-    let g: Graph = uf.follow[uf.unfold_loop](1,1,1,3)
+    let g: Graph = rules.follow[rules.unfold_loop](1,1,1,3)
     #print(g.str_relations())
     print(str_(g))
 

@@ -3,30 +3,28 @@ import benchmark
 
 
 fn main():
-    alias loops: Int = 10000
-    let r1: Int = random_si64(9,11).value
-    let r2: Int = random_si64(9,11).value
-    let r3: Int = random_si64(9,11).value
-    let r4: Int = random_si64(9,11).value
+    alias loops: Int = 1000
+    let r1: Int = random_si64(10,10).value
+    let r2: Int = random_si64(10,10).value
+    let r3: Int = random_si64(10,10).value
+    let r4: Int = random_si64(10,10).value
 
 
     @parameter
     fn cc[dt: DType, sq: SIMD[dt,1]]():
-        @unroll(100)
         for i in range(loops):
-            var o: CC[dt,sq] = CC[dt,sq](r1, r2) * CC[dt,sq](r3, r4)
-            o = o * CC[dt,sq](0, i)
+            var o: CC[dt,sq] = CC[dt,sq](r1, i) * CC[dt,sq](i, r4) * CC[dt,sq](i, r2) * CC[dt,sq](r3, i) * CC[dt,sq].I # I causes difference for floats when 'i' is used in expression
             benchmark.keep(o)
 
     @parameter
     fn sa[dt: DType, sq: SIMD[dt,1]]():
-        @unroll(100)
         for i in range(loops):
-            var o: SA[dt,sq] = SA[dt,sq](r1, r2) * SA[dt,sq](r3, r4)
-            o = o * A[dt,sq](i)
+            var o: SA[dt,sq] = SA[dt,sq](r1, i) * SA[dt,sq](i, r4) * SA[dt,sq](i, r2) * SA[dt,sq](r3, i) * SA[dt,sq].I # I causes difference for floats when 'i' is used in expression
             benchmark.keep(o)
 
-
+    print()
+    print("destructure benchmark")
+    print("---------------------")
     print()
     print("#------ -1 ------#")
     print("cc  :", benchmark.run[cc[DType.index, -1]]().mean["ns"]())
@@ -60,6 +58,8 @@ fn main():
 @value
 struct CC[dt: DType, sq: SIMD[dt,1]]:
 
+    alias I: Self = Self(0, 1)
+
     var s: SIMD[dt,1]
     var a: SIMD[dt,1]
 
@@ -71,6 +71,8 @@ struct CC[dt: DType, sq: SIMD[dt,1]]:
 
 @value
 struct SA[dt: DType, sq: SIMD[dt,1]]:
+
+    alias I: A[dt,sq] = A[dt,sq](1)
 
     var s: S[dt,sq]
     var a: A[dt,sq]

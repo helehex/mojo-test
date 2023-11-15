@@ -1,3 +1,9 @@
+"""
+Contains rules, and the means to follow them
+
+Example: `follow[unfold]()`
+"""
+
 from math import min, max
 from utils.vector import DynamicVector as List
 from utils.index import StaticIntTuple as Ind

@@ -4,65 +4,56 @@ import benchmark
 
 fn main():
     alias loops: Int = 10000
-    let r1: Int = random_si64(9,11).value
-    let r2: Int = random_si64(9,11).value
-    let r3: Int = random_si64(9,11).value
-    let r4: Int = random_si64(9,11).value
-    #         very inclusive (9,11)
+    let r1: Int = random_si64(10,10).value
+    let r2: Int = random_si64(10,10).value
+    let r3: Int = random_si64(10,10).value
+    let r4: Int = random_si64(10,10).value
 
 
     @parameter
     fn auto[dt: DType, m: Int]():
-        @unroll(100)
         for i in range(loops):
             var o: Auto[dt, m] = Auto[dt, m](r1,r2) + Auto[dt, m](r3,r4) + Auto[dt, m](i,i)
             benchmark.keep(o)
 
     @parameter
     fn auto_[dt: DType, m: Int]():
-        @unroll(100)
         for i in range(loops):
             var o: Auto_[dt, m] = Auto_[dt, m](r1,r2) + Auto_[dt, m](r3,r4) + Auto_[dt, m](i,i)
             benchmark.keep(o)
 
     @parameter
     fn manual_neg[dt: DType]():
-        @unroll(100)
         for i in range(loops):
             var o: ManualNeg[dt] = ManualNeg[dt](r1,r2) + ManualNeg[dt](r3,r4) + ManualNeg[dt](i,i)
             benchmark.keep(o)
 
     @parameter
     fn manual_zero[dt: DType]():
-        @unroll(100)
         for i in range(loops):
             var o: ManualZero[dt] = ManualZero[dt](r1,r2) + ManualZero[dt](r3,r4) + ManualZero[dt](i,i)
             benchmark.keep(o)
 
     @parameter
     fn manual_one[dt: DType]():
-        @unroll(100)
         for i in range(loops):
             var o: ManualOne[dt] = ManualOne[dt](r1,r2) + ManualOne[dt](r3,r4) + ManualOne[dt](i,i)
             benchmark.keep(o)
 
     @parameter
     fn manual_one_[dt: DType]():
-        @unroll(100)
         for i in range(loops):
             var o: ManualOne_[dt] = ManualOne_[dt](r1,r2) + ManualOne_[dt](r3,r4) + ManualOne_[dt](i,i)
             benchmark.keep(o)
 
     @parameter
     fn manual_two[dt: DType]():
-        @unroll(100)
         for i in range(loops):
             var o: ManualTwo[dt] = ManualTwo[dt](r1,r2) + ManualTwo[dt](r3,r4) + ManualTwo[dt](i,i)
             benchmark.keep(o)
 
     @parameter
     fn manual_two_[dt: DType]():
-        @unroll(100)
         for i in range(loops):
             var o: ManualTwo_[dt] = ManualTwo_[dt](r1,r2) + ManualTwo_[dt](r3,r4) + ManualTwo_[dt](i,i)
             benchmark.keep(o)

@@ -4,57 +4,48 @@ import benchmark
 
 fn main():
     alias loops: Int = 10000
-    let r1: Int = random_si64(9,11).value
-    let r2: Int = random_si64(9,11).value
-    let r3: Int = random_si64(9,11).value
-    #         very inclusive (9,11)
+    let r1: Int = random_si64(10,10).value
+    let r2: Int = random_si64(10,10).value
+    let r3: Int = random_si64(10,10).value
 
 
     @parameter
     fn direct1_test():
-        @unroll(100)
         for i in range(loops):
             benchmark.keep(direct1(r1))
 
     @parameter
     fn tuple1_test():
-        @unroll(100)
         for i in range(loops):
             benchmark.keep(tuple1(Float64(r1)))
 
     @parameter
     fn direct2_test():
-        @unroll(100)
         for i in range(loops):
             benchmark.keep(direct2(r1, r2))
 
     @parameter
     fn tuple2_test():
-        @unroll(100)
         for i in range(loops):
             benchmark.keep(tuple2((Float64(r1), Float64(r2))))
 
     @parameter
     fn variad2_test():
-        @unroll(100)
         for i in range(loops):
             benchmark.keep(variad(r1, r2))
 
     @parameter
     fn direct3_test():
-        @unroll(100)
         for i in range(loops):
             benchmark.keep(direct3(r1, r2, r3))
 
     @parameter
     fn tuple3_test():
-        @unroll(100)
         for i in range(loops):
             benchmark.keep(tuple3((Float64(r1), Float64(r2), Float64(r3))))
 
     @parameter
     fn variad3_test():
-        @unroll(100)
         for i in range(loops):
             benchmark.keep(variad(r1, r2, r3))
 
