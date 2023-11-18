@@ -1,20 +1,30 @@
 fn main():
-    let string: StringLiteral = "hello"
-    let a: IntLiteral = 3
+    var three: Int = 3
+    var result: SIMD[DType.float64,1] = three
 
     @parameter
     fn fn0[type: DType]():
-        print(string, SIMD[type,1](a))
+        result = (SIMD[type,1](three)/2).cast[DType.float64]()
 
-    let p: OutputChainPtr = OutputChainPtr(DTypePointer[DType.invalid]())
+    let out: OutputChainPtr = OutputChainPtr(DTypePointer[DType.invalid]())
 
+    result = three
     DType.float32.dispatch_integral[fn0]() # does not run. errors with argument of p
-    DType.index.dispatch_integral[fn0](p)  # runs
+    print(result)
 
-    #p.wait()
-    print(p.__bool__()) # false
-    #print(p.get_cuda_stream().stream.handle.__bool__()) # idk
-    #print(p.get_runtime().parallelism_level())
+    result = three
+    DType.index.dispatch_integral[fn0](out)  # runs
+    print(result)
 
-    DType.float32.dispatch_floating[fn0]()
+    #out.wait()
+    print(out.__bool__()) # false
+    #print(out.get_cuda_stream().stream.handle.__bool__()) # idk
+    #print(out.get_runtime().parallelism_level())
+
+    result = three
+    DType.float32.dispatch_floating[fn0]() # runs
+    print(result)
+
+    result = three
     DType.index.dispatch_floating[fn0]()   # does not run
+    print(result)
