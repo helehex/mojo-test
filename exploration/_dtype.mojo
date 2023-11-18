@@ -11,6 +11,7 @@ fn main():
     DType.float32.dispatch_integral[fn0]() # does not run. errors with argument of p
     DType.index.dispatch_integral[fn0](p)  # runs
 
+    #p.wait()
     print(p.__bool__()) # false
     #print(p.get_cuda_stream().stream.handle.__bool__()) # idk
     #print(p.get_runtime().parallelism_level())
