@@ -9,7 +9,7 @@ fn main():
     let out: OutputChainPtr = OutputChainPtr(DTypePointer[DType.invalid]())
 
     result = three
-    DType.float32.dispatch_integral[fn0]() # does not run. errors with argument of p
+    DType.float32.dispatch_integral[fn0]()   # does not run. errors with argument
     print(result)
 
     result = three
