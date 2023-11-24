@@ -22,6 +22,14 @@ fn main():
     let g4: M4 = M4(SIMD4(6))
     let h4: M4 = M4(M1(6))
 
+    # let i1: M1 = Float64(1)
+    # let i4: M4 = Float64(1)
+    # let j4: M4 = SIMD[DType.float64,4](1)
+
+    # let ii1: M1 = M1(Float64(1))
+    # let ii4: M4 = M4(Float64(1))
+    # let jj4: M4 = M4(SIMD[DType.float64,4](1))
+
 
     print(a1.value, b1.value, c1.value, d1.value)
     print(a4.value, b4.value, c4.value, d4.value, e4.value, f4.value, g4.value, h4.value)
@@ -33,7 +41,11 @@ struct MySIMD[type: DType, size: Int]:
 
     fn __init__(value: Int) -> Self: return Self{value: value}
 
-    fn __init__(*value: SIMD[type,1]) -> Self: return Self{value: value[0]}
+    fn __init__[__:None=None](value: SIMD[type,1]) -> Self: return Self{value: value}
+
+    #fn __init__(value: SIMD[type,1]) -> Self: return Self{value: value}
+
+    #fn __init__[type: DType](value: SIMD[type, 1]) -> Self: return Self{value: value.cast[Self.type]()}
 
     fn __init__(value: SIMD[type,size]) -> Self: return Self{value: value}
 
