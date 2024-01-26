@@ -10,7 +10,7 @@ from utils.index import StaticIntTuple as Ind
 #---
 #--- simple heap allocated array
 #---
-struct Array[T: AnyType]:
+struct Array[T: AnyRegType]:
     var _size: Int
     var _rc: Pointer[Int]
     var _data: Pointer[T]

@@ -5,7 +5,7 @@ Example: `follow[unfold]()`
 """
 
 from math import min, max
-from utils.vector import DynamicVector as List
+from collections.vector import DynamicVector as List
 from utils.index import StaticIntTuple as Ind
 from array import Array
 from table import Table, Row
@@ -87,13 +87,36 @@ fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with
     var edge_limit: Int = 0                   # the edge to stop looping at
     var o_: Int = _o
     
-    @parameter #--- main crawl loop
-    fn _crawl():
-        _push()
-        while depth > 0:
-            if _search(): _pop()  # search ended, pop trace  
-            else: _push()        # search deepens, push trace  
-    
+    @parameter #--- the walk did not touch itself, try adding the reached node
+    fn _reach():
+        let p_: Ind2 = Ind2(o_, depth - 1)
+        let _p: Ind2 = Ind2(_o, depth)
+        if nodes[_p] == 0:
+            _xy_id[node_count] = _p
+            node_count += 1
+            nodes[_p] = node_count
+        let i_: Int = nodes[p_] - 1
+        let _i: Int = nodes[_p] - 1
+        weights[_i] += 1
+        edges[Ind2(_i,i_)] += 1
+        edges[Ind2(i_,_i)] += 1
+
+    @parameter #--- check for continuation
+    fn _check() -> Bool:
+        if mask[_o] > 0:
+            _reach()
+            return False # loop encountered, return false
+        return True # keeps going, return true
+
+    @parameter #--- search through connected edges
+    fn _search() -> Bool:
+        while _o < edge_limit:
+            if seed.edges[Ind2(_o,o_)] > 0 and _check():
+                _reach()
+                return False # check succeeded, continue deeper
+            _o += 1
+        return True # all checks must fail to trigger a pop
+
     @parameter #--- push trace, and update mask
     fn _push():
         o_ = _o
@@ -114,36 +137,13 @@ fn unfold(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph with
         _o = trace.pop_back() + 1          # .. + 1 is so dont keep repeating the same _o after you pop!
         edge_start = seed.bounds[o_][0]
         edge_limit = seed.bounds[o_][1]
-        
-    @parameter
-    fn _search() -> Bool:       # search through connected edges
-        while _o < edge_limit:
-            if seed.edges[Ind2(_o,o_)] > 0 and _check():
-                _reach()
-                return False      # check succeeded, continue deeper
-            _o += 1
-        return True               # all checks must fail to trigger a pop
-        
-    @parameter
-    fn _check() -> Bool:   # check for continuation
-        if mask[_o] > 0:
-            _reach()
-            return False     # loop encountered, return false
-        return True          # keeps going, return true
-        
-    @parameter
-    fn _reach(): # the walk did not touch itself, try adding the reached node
-        let p_: Ind2 = Ind2(o_, depth - 1)
-        let _p: Ind2 = Ind2(_o, depth)
-        if nodes[_p] == 0:
-            _xy_id[node_count] = _p
-            node_count += 1
-            nodes[_p] = node_count
-        let i_: Int = nodes[p_] - 1
-        let _i: Int = nodes[_p] - 1
-        weights[_i] += 1
-        edges[Ind2(_i,i_)] += 1
-        edges[Ind2(i_,_i)] += 1
+
+    @parameter #--- main crawl loop
+    fn _crawl():
+        _push()
+        while depth > 0:
+            if _search(): _pop() # search ended, pop trace
+            else: _push()       # search deepens, push trace
         
     _crawl()
     _ = trace # keep trace and mask alive for the duration of the crawl
@@ -231,12 +231,41 @@ fn unfold_loop(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph
     var edge_limit: Int = 0                   # the edge to stop looping at
     var o_: Int = _o
     
-    @parameter #--- main crawl loop
-    fn _crawl():
-        _push()
-        while depth > 0:
-            if _search(): _pop()  # search ended, pop trace  
-            else: _push()        # search deepens, push trace  
+    @parameter
+    fn _reach(): # the walk did not touch itself, try adding the reached node
+        let p_: Ind2 = Ind2(o_, depth - 1)
+        let _p: Ind2 = Ind2(_o, depth)
+        if nodes[_p] == 0:
+            _xy_id[node_count] = _p
+            node_count += 1
+            nodes[_p] = node_count
+        let i_: Int = nodes[p_] - 1
+        let _i: Int = nodes[_p] - 1
+        weights[_i] += 1
+        edges[Ind2(_i,i_)] += 1
+
+    @parameter #--- the check has completed a loop, add a previously unrealized node
+    fn _touch():
+        _reach()
+        let t_: Int = nodes[Ind2(_o, depth)] - 1
+        let _t: Int = nodes[Ind2(_o, mask[_o] - 1)] - 1
+        edges[Ind2(_t,t_)] += 1
+
+    @parameter #--- check for continuation
+    fn _check() -> Bool:
+        if mask[_o] > 0:
+            _touch()
+            return False # loop encountered, return false
+        return True # keeps going, return true
+
+    @parameter #--- search through connected edges
+    fn _search() -> Bool:
+        while _o < edge_limit:
+            if seed.edges[Ind2(_o,o_)] > 0 and _check():
+                _reach()
+                return False # check succeeded, continue deeper
+            _o += 1
+        return True # all checks must fail to trigger a pop
     
     @parameter #--- push trace, and update mask
     fn _push():
@@ -258,43 +287,14 @@ fn unfold_loop(seed: Graph, origin: Int) -> Graph: #------ unfold the seed graph
         _o = trace.pop_back() + 1          # .. + 1 is so dont keep repeating the same _o after you pop!
         edge_start = seed.bounds[o_][0]
         edge_limit = seed.bounds[o_][1]
-        
-    @parameter
-    fn _search() -> Bool:       # search through connected edges
-        while _o < edge_limit:
-            if seed.edges[Ind2(_o,o_)] > 0 and _check():
-                _reach()
-                return False      # check succeeded, continue deeper
-            _o += 1
-        return True               # all checks must fail to trigger a pop
-        
-    @parameter
-    fn _check() -> Bool:   # check for continuation
-        if mask[_o] > 0:
-            _touch()
-            return False     # loop encountered, return false
-        return True          # keeps going, return true
-        
-    @parameter
-    fn _reach(): # the walk did not touch itself, try adding the reached node
-        let p_: Ind2 = Ind2(o_, depth - 1)
-        let _p: Ind2 = Ind2(_o, depth)
-        if nodes[_p] == 0:
-            _xy_id[node_count] = _p
-            node_count += 1
-            nodes[_p] = node_count
-        let i_: Int = nodes[p_] - 1
-        let _i: Int = nodes[_p] - 1
-        weights[_i] += 1
-        edges[Ind2(_i,i_)] += 1
-        
-    @parameter
-    fn _touch(): # the check has completed a loop, add a previously unrealized node
-        _reach()
-        let t_: Int = nodes[Ind2(_o, depth)] - 1
-        let _t: Int = nodes[Ind2(_o, mask[_o] - 1)] - 1
-        edges[Ind2(_t,t_)] += 1
-        
+
+    @parameter #--- main crawl loop
+    fn _crawl():
+        _push()
+        while depth > 0:
+            if _search(): _pop() # search ended, pop trace
+            else: _push()       # search deepens, push trace
+
     _crawl()
     _ = trace # keep trace and mask alive for the duration of the crawl
     _ = mask  # ^

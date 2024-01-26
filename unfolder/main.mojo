@@ -3,6 +3,7 @@ from array import Array
 from table import Table, Row
 from graph import Graph
 from hio import print_, str_, str_simple, str_relations
+import rules
 
 alias Ind2 = Ind[2]
 
@@ -22,8 +23,6 @@ fn main():
 #------ unfolder test ------#
 #
 fn unfolder_test():
-    import rules
-
     # follows an origin history with rule `uf.unfold`
     let g: Graph = rules.follow[rules.unfold](1,1,1,3)
     
@@ -34,8 +33,6 @@ fn unfolder_test():
 #------ unfolder_loop test ------#
 #
 fn unfolder_loop_test():
-    import rules
-
     let g: Graph = rules.follow[rules.unfold_loop](1,1,1,3)
     #print(g.str_relations())
     print(str_(g))

@@ -10,7 +10,7 @@ from array import Array
 
 #------ Table ------#
     
-struct Table[T: AnyType]:
+struct Table[T: AnyRegType]:
     var _size: Int
     var _cols: Int
     var _rows: Int
@@ -137,7 +137,7 @@ struct Table[T: AnyType]:
         
 #------ Row ------#
         
-struct Row[T: AnyType]:
+struct Row[T: AnyRegType]:
     var _cols: Int
     var _data: Pointer[T]
     
