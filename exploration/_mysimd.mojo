@@ -9,7 +9,7 @@ fn main():
     let b1: M1 = SIMD1(6)
 
     let c1: M1 = M1(6)
-    let d1: M1 = M1(SIMD1(6))
+    let d1: M1 = M1.__init__(SIMD1(6))
 
 
     let a4: M4 = 6
@@ -18,7 +18,7 @@ fn main():
     let d4: M4 = M1(6)
 
     let e4: M4 = M4(6)
-    let f4: M4 = M4(SIMD1(6))
+    let f4: M4 = M4.__init__(SIMD1(6))
     let g4: M4 = M4(SIMD4(6))
     let h4: M4 = M4(M1(6))
 
@@ -41,7 +41,17 @@ struct MySIMD[type: DType, size: Int]:
 
     fn __init__(value: Int) -> Self: return Self{value: value}
 
-    fn __init__[__:None=None](value: SIMD[type,1]) -> Self: return Self{value: value}
+    fn __init__[__:None=None](value: SIMD[type,1]) -> Self:
+        print("discard parameter")
+        return Self{value: value}
+
+    fn __init__(*value: SIMD[type,1]) -> Self:
+        print("discard variadic")
+        return Self{value: value[0]}
+
+    # fn __init__(value: Tuple[SIMD[type,1]]) -> Self:
+    #     print("discard tuple")
+    #     return Self{value: value.get[0,SIMD[type,1]]()}
 
     #fn __init__(value: SIMD[type,1]) -> Self: return Self{value: value}
 
