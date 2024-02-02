@@ -1,8 +1,4 @@
-from builtin import simd
-
-let a: SIMD[DType.index,1] = 1
-
-fn hover_me[a: Int](b: String) -> AnyType:
+fn hover_me[a: Int](b: String) -> AnyRegType:
     """
     Docstring example.
 
@@ -13,10 +9,10 @@ fn hover_me[a: Int](b: String) -> AnyType:
         b: A string.
 
     Returns:
-        AnyType, quite literally.
+        AnyRegType, quite literally.
 
     """
-    return AnyType
+    return AnyRegType
 
 fn now_hover_me():
     """

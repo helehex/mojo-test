@@ -1,3 +1,5 @@
+from utils.variant import Variant
+
 alias SIMD1 = SIMD[DType.float32,1]
 alias SIMD4 = SIMD[DType.float32,4]
 alias M1 = MySIMD[DType.float32,1]
@@ -41,22 +43,33 @@ struct MySIMD[type: DType, size: Int]:
 
     fn __init__(value: Int) -> Self: return Self{value: value}
 
-    fn __init__[__:None=None](value: SIMD[type,1]) -> Self:
-        print("discard parameter")
+
+
+    
+
+    
+
+    # fn __init__(value: Variant[SIMD[type,1], SIMD[type,size]]) -> Self: return Self{value: value.get[SIMD[type,size]]()}
+
+    fn __init__(value: SIMD[type,size]) -> Self:
         return Self{value: value}
 
-    fn __init__(*value: SIMD[type,1]) -> Self:
-        print("discard variadic")
-        return Self{value: value[0]}
+    #fn __init__(value: SIMD[type,1]) -> Self: return Self{value: value}
+
+    # discard parameter
+    fn __init__[__:None=None](value: SIMD[type,1]) -> Self:
+        return Self{value: value}
+
+    # fn __init__[type: DType](value: SIMD[type, 1]) -> Self:
+    #     return Self{value: value.cast[Self.type]()}
+
+    # fn __init__(*value: SIMD[type,1]) -> Self:
+    #     print("discard variadic")
+    #     return Self{value: value[0]}
 
     # fn __init__(value: Tuple[SIMD[type,1]]) -> Self:
     #     print("discard tuple")
     #     return Self{value: value.get[0,SIMD[type,1]]()}
 
-    #fn __init__(value: SIMD[type,1]) -> Self: return Self{value: value}
-
-    #fn __init__[type: DType](value: SIMD[type, 1]) -> Self: return Self{value: value.cast[Self.type]()}
-
-    fn __init__(value: SIMD[type,size]) -> Self: return Self{value: value}
-
-    fn __init__(value: MySIMD[type,1]) -> Self: return Self{value: value.value}
+    fn __init__(value: MySIMD[type,1]) -> Self:
+        return Self{value: value.value}
