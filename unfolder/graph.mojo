@@ -2,6 +2,7 @@ from math import min, max
 from utils.index import StaticIntTuple as Ind
 from array import Array
 from table import Table, Row
+from hio import str_
 
 alias Ind2 = Ind[2]
 
@@ -15,7 +16,7 @@ alias Ind2 = Ind[2]
 #------ edge table's memory layout is not currently optimized sparsely
 #------ mostly just a container (without much interface currently) which the unfolder uses
 #---
-struct Graph:
+struct Graph(Stringable):
 
     #------< Data >------#
     #
@@ -135,3 +136,51 @@ struct Graph:
     fn xy_id(self, id: Int) -> Ind2: return self._xy_id[id]                # node-id to node-coordinates
     @always_inline
     fn lb_id(self, id: Int) -> Int: return self._lb_id[id]                 # node-id to node_label
+
+
+    #------( Format )------#
+    #
+    fn __str__(self) -> String:
+        return self.to_string()
+
+    #------ Graph to String
+    #
+    fn to_string(self) -> String:
+        var s: String = ""
+        s += "history: " + str_(self.history) + "\n"
+        s += "width: " + String(self.width) + "\n"
+        s += "depth: " + String(self.depth) + "\n\n"
+        s += "nodes: (count: " + String(self.node_count) + ")\n" + str_(self.nodes) + "\n"
+        s += "weights: " + str_(self.weights) + "\n\n"
+        s += "edges: (count: " + String(self.edge_count) + ", max_out: " + String(self.max_edge_out) + ")\n" + str_(self.edges) + "\n"
+        s += "bounds: " + str_[2](self.bounds) + "\n\n"
+        s += "id to xy: " + str_[2](self._xy_id) + "\n" # not infering parameter? is this expected?
+        s += "id to lb: " + str_(self._lb_id) + "\n"
+        s += "lb to id: " + str_(self._id_lb) + "\n"
+        return s
+
+    #------ Graph (simple) to String
+    #
+    fn info_to_string(self) -> String:
+        var s: String = ""
+        s += "history: " + str_(self.history) + "\n"
+        s += "width: " + String(self.width) + "\n"
+        s += "depth: " + String(self.depth) + "\n\n"
+        s += "nodes: (count: " + String(self.node_count) + ")\n"
+        s += "weights: " + str_(self.weights) + "\n\n"
+        s += "edges: (count: " + String(self.edge_count) + ", max_out: " + String(self.max_edge_out) + ")\n"
+        return s
+
+    #------ Graph (relations) to String
+    #
+    fn relations_to_string(self) -> String: #--- returns a string formatted as a set of relations: {1->2, 2->3, 3->0,...}
+        var s: String = "{"
+        for y in range(self.node_count):
+            var start: Int = self.bounds[y][0]
+            var limit: Int = self.bounds[y][1]
+            if start < y: start = y
+            for x in range(start, limit):
+                if self.edges[Ind[2](x,y)] > 0:
+                    if len(s) != 1: s += ", "
+                    s += String(self.lb_id(y))+"->"+String(self.lb_id(x))
+        return s + "}"

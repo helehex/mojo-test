@@ -2,7 +2,7 @@ from utils.index import StaticIntTuple as Ind
 from array import Array
 from table import Table, Row
 from graph import Graph
-from hio import print_, str_, str_simple, str_relations
+from hio import print_, str_
 import rules
 
 alias Ind2 = Ind[2]
@@ -24,10 +24,10 @@ fn main():
 #
 fn unfolder_test():
     # follows an origin history with rule `uf.unfold`
-    let g: Graph = rules.follow[rules.unfold](1,1,1,3)
+    let g: Graph = rules.follow[rules.unfold](1,1,1,1,1)
     
     #print(g.str_relations())
-    print(str_simple(g))
+    print(g)
 
 
 #------ unfolder_loop test ------#
@@ -35,7 +35,7 @@ fn unfolder_test():
 fn unfolder_loop_test():
     let g: Graph = rules.follow[rules.unfold_loop](1,1,1,3)
     #print(g.str_relations())
-    print(str_(g))
+    print(g)
 
 
 
