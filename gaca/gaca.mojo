@@ -324,14 +324,14 @@ struct Field[type: DType, width: Int, height: Int]: # prime_func: fn[simd_width:
         self.rc = Pointer[Int].alloc(1)
         self.rc.store(0)
         self.step_count = 0
-        self.set_zero()
+        self.fill_zero()
         
-    fn __init__(inout self, prime: Int):
+    fn __init__[prime: prime_func](inout self):
         self.data = DTypePointer[type].alloc(Self.true_size)
         self.rc = Pointer[Int].alloc(1)
         self.rc.store(0)
         self.step_count = 0
-        self.set_prime()
+        self.fill_prime[prime]()
     
     fn __copyinit__(inout self, other: Self):
         self.data = other.data
@@ -358,45 +358,21 @@ struct Field[type: DType, width: Int, height: Int]: # prime_func: fn[simd_width:
     
     # populate field with all zero's
     @always_inline
-    fn set_zero(inout self):
+    fn fill_zero(inout self):
         self.step_count = 0
         memset_zero(self.data, Self.true_size)
     
     # populate field with a map function
     @always_inline
-    fn set_prime(inout self):
+    fn fill_prime[prime: prime_func](inout self):
         self.step_count = 0
         @parameter
         fn prime_row(row: Int):
             @parameter
             fn prime_col[size: Int](col: Int):
-                self.simd_store[size](row, col, self.prime_2[size](col, row))
+                self.simd_store[size](row, col, prime[type, width, height, size](col, row))
             vectorize[Self.vector_size, prime_col](width)
         parallelize[prime_row](height)
-    
-    fn prime_1[size: Int](self, col: Int, row: Int) -> MultivectorG2[type, size]:
-        alias half_width: Int = width // 2
-        alias half_height: Int = height // 2
-        let rel: Int = half_width - col
-        if (row != half_height) | (rel < 0) | (rel >= size):
-            return MultivectorG2[type, size](0)
-        var m: MultivectorG2[type, size] = MultivectorG2[type, size](0)
-        m.set_lane(rel, Self.Unit(1))
-        return m
-    
-    fn prime_2[size: Int](self, col: Int, row: Int) -> MultivectorG2[type, size]:
-        alias half_width: Int = width // 2
-        alias half_height: Int = height // 2
-        let rel: Int = half_width - col
-        if (row != half_height) | (rel < 0) | (rel >= size):
-            return MultivectorG2[type, size](0)
-        var m: MultivectorG2[type, size] = MultivectorG2[type, size](0)
-        m.set_lane(rel, Self.Unit(1, 0, 0, 0))
-        return m
-    
-    fn prime_3[size: Int](self, col: Int, row: Int) -> MultivectorG2[type, size]:
-        let cols: SIMD[type, size] = (((col+iota[type, size]()) + row) % 3) // 3
-        return MultivectorG2[type, size](cols, 0, 0, 0)
     
     # gets the unsigned maximum between all values contained in the field
     fn reduce_max(self) -> Self.Word:
@@ -505,37 +481,22 @@ struct Field[type: DType, width: Int, height: Int]: # prime_func: fn[simd_width:
     
     #fn step(self, VariadicList, fn(VariadicList) -> Multivector) -> Self: neighborhood and rule?
     
-    fn step(self) -> Self:
+    fn step[rule: rule_func](self) -> Self:
         var new_field: Self = Self()
         new_field.step_count = self.step_count + 1
         @parameter
         fn step_row(row: Int):
             @parameter
             fn step_col[size: Int](col: Int):
-                let m: MultivectorG2[type, size] = self.rule_1[size](
+                let m: MultivectorG2[type, size] = rule[type, size](
                             self.simd_load_loop[size](row + 1, col - 1), self.simd_load_loop[size](row + 1, col), self.simd_load_loop[size](row + 1, col + 1),
-                            self.simd_load_loop[size](row + 0, col - 1),                                                self.simd_load_loop[size](row + 0, col + 1),
+                            self.simd_load_loop[size](row + 0, col - 1),                                          self.simd_load_loop[size](row + 0, col + 1),
                             self.simd_load_loop[size](row - 1, col - 1), self.simd_load_loop[size](row - 1, col), self.simd_load_loop[size](row - 1, col + 1))
                 new_field.simd_store[size](row, col, m)
             vectorize[Self.vector_size, step_col](width)
         parallelize[step_row](height)
         return new_field
     
-    fn rule_1[size: Int](self,
-                        pn: MultivectorG2[type, size], pz: MultivectorG2[type, size], pp: MultivectorG2[type, size],
-                        zn: MultivectorG2[type, size],                                zp: MultivectorG2[type, size],
-                        nn: MultivectorG2[type, size], nz: MultivectorG2[type, size], np: MultivectorG2[type, size],
-                       ) -> MultivectorG2[type, size]:
-        let m = (
-        pn*VectorG2[type, 1](-1, +1) + pz*VectorG2[type, 1](+0, -1) + pp*VectorG2[type, 1](+1, +1) +
-        zn*VectorG2[type, 1](+1, +0) +                                zp*VectorG2[type, 1](+1, +0) +
-        nn*VectorG2[type, 1](-1, -1) + nz*VectorG2[type, 1](+1, -1) + np*VectorG2[type, 1](+1, 0))/2
-        # pn*G2_Vector[bit_type, 1](+1, -1) + pz*G2_Vector[bit_type, 1](+0, -1) + pp*G2_Vector[bit_type, 1](-1, -1) +
-        # zn*G2_Vector[bit_type, 1](+1, +0) +                                     zp*G2_Vector[bit_type, 1](-1, +0) +
-        # nn*G2_Vector[bit_type, 1](+1, +1) + nz*G2_Vector[bit_type, 1](+0, +1) + np*G2_Vector[bit_type, 1](-1, +1)
-        return m
-        
-        
 
     #------ IO ------#
     
@@ -568,13 +529,11 @@ struct Field[type: DType, width: Int, height: Int]: # prime_func: fn[simd_width:
     
     def render(self):
         let np = Python.import_module("numpy")
-        
         let mat = Python.import_module("matplotlib")
         let plt = Python.import_module("matplotlib.pyplot")
-        let colors = Python.import_module("matplotlib.colors")
         let np_array = np.zeros((height, width, 3), np.float32)
 
-        mat.use("TkAgg")
+        # mat.use("TkAgg")
 
         for col in range(width):
             for row in range(height):
@@ -589,17 +548,75 @@ struct Field[type: DType, width: Int, height: Int]: # prime_func: fn[simd_width:
         plt.imshow(np_array)
         plt.axis("off")
         plt.show()
-        
+
+
+# autoparametrization doesnt work very well for higher order functions, otherwise field could be an argument and type, width and height could be inferred
+# you wouldnt need any of those if you could partially bind parameterized functions
+alias prime_func = fn[type: DType, width: Int, height: Int, size: Int](col: Int, row: Int) -> MultivectorG2[type,size]
+
+fn prime_1[type: DType, width: Int, height: Int, size: Int](col: Int, row: Int) -> MultivectorG2[type, size]:
+    if row != (height // 2): return MultivectorG2[type, size](0)
+    let center: Int = (width // 2) - col
+    if (center < 0) or (center >= size): return MultivectorG2[type, size](0)
+    var m: MultivectorG2[type, size] = MultivectorG2[type, size](0)
+    m.set_lane(center, MultivectorG2[type,1](1, 0, 0, 0))
+    return m
+
+fn prime_2[type: DType, width: Int, height: Int, size: Int](col: Int, row: Int) -> MultivectorG2[type, size]:
+    if row != (height // 2): return MultivectorG2[type, size](0)
+    let center: Int = (width // 2) - col
+    if (center < 0) or (center >= size): return MultivectorG2[type, size](0)
+    var m: MultivectorG2[type, size] = MultivectorG2[type, size](0)
+    m.set_lane(center, MultivectorG2[type,1](0, 0, 0, 1))
+    return m
+
+fn prime_3[type: DType, width: Int, height: Int, size: Int](col: Int, row: Int) -> MultivectorG2[type, size]:
+    let cols: SIMD[type, size] = (((col+iota[type, size]()) + row) % 3) // 3
+    return MultivectorG2[type, size](cols, 0, 0, 0)
+
+
+alias rule_func = fn[type: DType, size: Int](
+    nw: MultivectorG2[type, size], nn: MultivectorG2[type, size], ne: MultivectorG2[type, size],
+    ww: MultivectorG2[type, size],                                ee: MultivectorG2[type, size],
+    sw: MultivectorG2[type, size], ss: MultivectorG2[type, size], se: MultivectorG2[type, size]
+    ) -> MultivectorG2[type,size]
+
+fn rule_1[type: DType, size: Int](
+    nw: MultivectorG2[type, size], nn: MultivectorG2[type, size], ne: MultivectorG2[type, size],
+    ww: MultivectorG2[type, size],                                ee: MultivectorG2[type, size],
+    sw: MultivectorG2[type, size], ss: MultivectorG2[type, size], se: MultivectorG2[type, size]
+    ) -> MultivectorG2[type, size]:
+    let m =
+    nw*VectorG2[type, 1](-1, +1) + nn*VectorG2[type, 1](+0, -1) + ne*VectorG2[type, 1](+1, +1) +
+    ww*VectorG2[type, 1](+1, +0)  +                               ee*VectorG2[type, 1](+1, +0) +
+    sw*VectorG2[type, 1](-1, -1) + ss*VectorG2[type, 1](+1, -1) + se*VectorG2[type, 1](+1, +0)
+    return m / 2
+
+
+fn rule_2[type: DType, size: Int](
+    nw: MultivectorG2[type, size], nn: MultivectorG2[type, size], ne: MultivectorG2[type, size],
+    ww: MultivectorG2[type, size],                                ee: MultivectorG2[type, size],
+    sw: MultivectorG2[type, size], ss: MultivectorG2[type, size], se: MultivectorG2[type, size]
+    ) -> MultivectorG2[type, size]:
+    let m =
+    nw*VectorG2[type, 1](+1, -1) + nn*VectorG2[type, 1](+0, -1) + ne*VectorG2[type, 1](-1, -1) +
+    ww*VectorG2[type, 1](+1, +0) +                                ee*VectorG2[type, 1](-1, +0) +
+    sw*VectorG2[type, 1](+1, +1) + ss*VectorG2[type, 1](+0, +1) + se*VectorG2[type, 1](-1, +1)
+    return m
 
 
 
-def test(iterations: Int):
+
+def test[prime: prime_func, rule: rule_func](iterations: Int):
     alias size: Int = 128
-    var f: Field[DType.float64, size, size] = Field[DType.float64, size, size](5)
+    var f: Field[DType.float64, size, size] = Field[DType.float64, size, size]()
+    f.fill_prime[prime]()
     for i in range(iterations + 1):
         f.print_info()
-        f = f.step()
+        f = f.step[rule]()
     f.render()
+
+
 
 
 alias python_install_packages: StringRef = """
@@ -621,29 +638,13 @@ def install_if_missing(name: str):
         raise ImportError(f"{name} not found")
 
 install_if_missing("numpy")
-install_if_missing("tk")
 install_if_missing("matplotlib")
 """
+
 
 
 
 def main():
     var py = Python()
     py.eval(python_install_packages)
-    test(10)
-
-
-
-
-# the random behaviour at 28 is overflow, you can spot it pretty well. ca's like to make trippy spiral patterns, it's rare to get something really cool
-# it's interesting that the overflow spreads in a circle, but the edges spread in a square. this means the magnitude of values are distributed in a circle -> square gradient
-# value growth isnt too bad actually, exponential
-
-# i thought it was a bug, but it seems every 4 steps there is a little gain on the max i value, but not the min i value. this is likely due to the initial condition of positive i
-# initial condition of -i give similar results, but reversed.
-
-# initial condition of i has a near rotational effect, how surprising
-# i compared to 1 roates the vector part?
-
-# todo -- one last test, provide step 2 as the initial condition, and make sure you still get the same behaviour at step 4, 8, and 12
-# gotta abstract some stuff
+    test[prime_1, rule_1](30)
