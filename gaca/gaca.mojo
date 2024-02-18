@@ -325,13 +325,12 @@ struct Field[type: DType, width: Int, height: Int]: # prime_func: fn[simd_width:
         self.rc.store(0)
         self.step_count = 0
         self.fill_zero()
-        
-    fn __init__[prime: prime_func](inout self):
-        self.data = DTypePointer[type].alloc(Self.true_size)
-        self.rc = Pointer[Int].alloc(1)
-        self.rc.store(0)
-        self.step_count = 0
-        self.fill_prime[prime]()
+    
+    @staticmethod
+    fn prime[prime: prime_func]() -> Self:
+        var field: Self = Self()
+        field.fill_prime[prime]()
+        return field
     
     fn __copyinit__(inout self, other: Self):
         self.data = other.data
@@ -609,8 +608,7 @@ fn rule_2[type: DType, size: Int](
 
 def test[prime: prime_func, rule: rule_func](iterations: Int):
     alias size: Int = 128
-    var f: Field[DType.float64, size, size] = Field[DType.float64, size, size]()
-    f.fill_prime[prime]()
+    var f = Field[DType.float64, size, size].prime[prime]()
     for i in range(iterations + 1):
         f.print_info()
         f = f.step[rule]()
