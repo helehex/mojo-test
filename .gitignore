@@ -1,2 +1,10 @@
+# ignore code
 **/temp.**
 **/temp/
+
+# ignore packages
+*.mojopkg
+
+# ignore environments
+.magic
+magic.lock
